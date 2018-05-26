@@ -14,14 +14,41 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <deque>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #define MYPORT 8080    // port, z którym będą się łączyli użytkownicy
 
 #define BACKLOG 10     // jak dużo możę być oczekujących połączeń w kolejce
 
-#define MAX_LENGTH 10
+#define MAX_LENGTH 20
+
+#define DIR_PATH "./Files/"
 
 using namespace std;
+
+struct stat info;
+deque<string> FileList;
+fstream fileStream;
+
+int fWrongName = 0;
+
+void readDocumentNames(const string& dirName, deque<string>& list)
+{
+	DIR* dirp= opendir(dirName.c_str());
+	struct dirent *dp;
+	while((dp = readdir(dirp)) != NULL)
+	{
+		if(*(dp->d_name)!='.' && *(dp->d_name)!='.'+'.')
+		list.push_back(dp->d_name);
+	}
+	closedir(dirp);
+}
+
 
 void sigchld_handler(int s)
 {
@@ -92,20 +119,90 @@ int main()
             close(sockfd); // dziecko nie potrzebuje gniazda nasłuchującego
             if(send(new_fd, "Hello, world!\n", 14, 0) == -1)
                  perror("send");
-
-            int amount;
+						printf("wyslane\n");
+						int amount;
+						char instr[MAX_LENGTH];
             char tab[MAX_LENGTH];
+
+						if( stat( DIR_PATH, &info ) != 0 )
+						{
+										system((string("mkdir -p ") + DIR_PATH).c_str());
+						}
+						else if( info.st_mode & S_IFDIR )  // S_ISDIR() doesn't exist on my windows
+						    {}
+						else
+						    perror( (string("") + DIR_PATH + " is no directory\n").c_str());
+
+						readDocumentNames(DIR_PATH,FileList);		//sczytanie listy plikow z folderu do filelist
             while (1)
             {
-              if((amount = recv(new_fd, tab, sizeof(tab) - 1, 0)) == -1)
+							printf("czekam\n");
+              if((amount = recv(new_fd, instr, sizeof(instr) - 1, 0)) == -1)
               {
                   perror("recv");
                   exit(1);
               }
+
               if(amount == 0)
                 break;
-              tab[amount] = '\0';
-              printf("%d: %s \n", amount, tab);
+
+              instr[amount] = '\0';
+
+              printf("%d: %s  \n", amount, instr);
+
+
+
+              if(!strcmp(instr,"nowy"))
+              {
+                  amount = recv(new_fd, tab, sizeof(tab) - 1, 0);
+                  tab[amount] = '\0';
+									for(int j=0; j<FileList.size();j++)
+									{
+										if(FileList[j]==((string)tab).append(".txt"))
+										{
+											fWrongName = 1;
+										}
+
+									}
+									if(!fWrongName)
+									{
+					          FileList.push_back(((string)tab).append(".txt"));
+										fileStream.open(DIR_PATH+FileList[FileList.size()-1],ios::out);
+										if(fileStream.good())
+										{
+											printf("Creation went OK \n");
+											//send(new_fd, "Creation went OK\n", 17, 0);
+											fileStream << FileList[FileList.size()-1];
+											fileStream.flush();			/*Forcing buffer to go to harddisc's memory*/
+											fileStream.close(); 			/*Close the file when finished*/
+										}
+										else
+										{
+											printf("Error in file creation\n");
+											send(new_fd, "Error in file creation\n", 23, 0);
+										}
+									}
+									else
+									{
+										printf("File with such a name already exists\n");
+										send(new_fd, "File with such a name already exists\n", 37, 0);
+
+										fWrongName = 0;
+
+									}
+
+					    }
+							if(!strcmp(instr,"update"))
+							{
+								if(FileList.size()==0)
+									send(new_fd, "\n", strlen("\n"), 0);
+								for(int j=0; j<FileList.size();j++)
+								{
+								send(new_fd, (FileList[j]+"\n").c_str(), strlen((FileList[j]+"\n").c_str()), 0);
+								cout<<FileList[j]+"\n";
+								}
+							}
+
 
             }
             close(new_fd);
