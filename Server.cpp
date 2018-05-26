@@ -173,7 +173,7 @@ int main()
 										{
 											printf("Creation went OK \n");
 											//send(new_fd, "Creation went OK\n", 17, 0);
-											fileStream << FileList[FileList.size()-1];
+											fileStream << "\0";
 											fileStream.flush();			/*Forcing buffer to go to harddisc's memory*/
 											fileStream.close(); 			/*Close the file when finished*/
 										}
@@ -203,6 +203,25 @@ int main()
 								cout<<FileList[j]+"\n";
 								}
 							}
+              if(!strcmp(instr,"get"))
+              {
+                amount = recv(new_fd, tab, sizeof(tab) - 1, 0);
+                tab[amount] = '\0';
+								printf("%d: %s  \n", amount, tab);
+                ifstream file;
+                string line;
+                file.open ( (string)DIR_PATH + tab );
+                if (file.is_open())
+                {
+									printf("plik otwarty\n");
+                  while ( getline (file,line) )
+                  {
+                    send(new_fd, (line+"\n").c_str(), strlen((line+"\n").c_str()), 0);
+                  }
+                  send(new_fd, "\0", sizeof(char), 0);
+                  file.close();
+                }
+              }
 
 
             }

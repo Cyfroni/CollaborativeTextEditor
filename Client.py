@@ -82,23 +82,63 @@ class optionmenu():
 
 
     def option_select(self, *args):
-        print(self.om_variable.get())
+        fileName = self.om_variable.get()
+        textWindow = Tk()
+        sock.send("get")
+        sock.send(fileName)
+        self.parent.withdraw()
+        textWindow.protocol('WM_DELETE_WINDOW',lambda: (textWindow.destroy(), self.parent.deiconify()))
+
+        text1 = Text(textWindow, height=20, width=5)
+        text1.insert(END,'\n')
+        text1.pack(side=LEFT,fill=Y)
+
+        text2 = Text(textWindow, height=20, width=50)
+        scroll = Scrollbar(textWindow, command=text2.yview)
+        text2.configure(yscrollcommand=scroll.set)
+        # text2.tag_configure('bold_italics', font=('Arial', 12, 'bold', 'italic'))
+        # text2.tag_configure('big', font=('Verdana', 20, 'bold'))
+        # text2.tag_configure('color', foreground='#476042',
+        # 					font=('Tempus Sans ITC', 12, 'bold'))
+        # text2.tag_bind('follow', '<1>', lambda e, t=text2: t.insert(END, "Not now, maybe later!"))
+        # text2.insert(END,'\nWilliam Shakespeare\n', 'big')
+        # quote = """
+        # To be, or not to be that is the question:
+        # Whether 'tis Nobler in the mind to suffer
+        # The Slings and Arrows of outrageous Fortune,
+        # Or to take Arms against a Sea of troubles,
+        # """
+        # text2.insert(END, quote, 'color')
+        # text2.insert(END, 'follow-up\n', 'follow')
+        text2.pack(side=LEFT, fill=Y)
+        scroll.pack(side=RIGHT, fill=Y)
+
+        data = 'op'
+        while not (len(data) == 0 or data[-1] == '\0'):
+            data = sock.recv(100)
+            text2.insert(END, data)
+            print(data)
+        center_window(textWindow,300,100)
+
+
+
+
+
 
 
     def create(self):
         print("create")
-        FileNameWindow=Tk()
+        fileNameWindow=Tk()
         self.parent.withdraw()
-        FileNameWindow.protocol('WM_DELETE_WINDOW',lambda : None)
-        entry = Entry(FileNameWindow)
-        ok = Button(FileNameWindow, text = "OK", width = 10, command = lambda: self.askForNewDoc(FileNameWindow,entry))
-        back = Button(FileNameWindow, text = "<-", width = 10, command = lambda: (FileNameWindow.destroy(), self.parent.deiconify()))
+        fileNameWindow.protocol('WM_DELETE_WINDOW',lambda : None)
+        entry = Entry(fileNameWindow)
+        ok = Button(fileNameWindow, text = "OK", width = 10, command = lambda: self.askForNewDoc(fileNameWindow,entry))
+        back = Button(fileNameWindow, text = "<-", width = 10, command = lambda: (fileNameWindow.destroy(), self.parent.deiconify()))
         entry.grid(columnspan=2)
         entry.focus_set()
         back.grid(column=0, row=1)
         ok.grid(column=1, row=1)
-
-        center_window(FileNameWindow,300,100)
+        center_window(fileNameWindow,300,100)
 
 try:
     sock.connect((HOST, PORT))
