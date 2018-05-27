@@ -23,6 +23,12 @@ def sender(fun):
 
 sock.send = sender(sock.send)
 
+def what(args):
+    ret = []
+    for arg in args:
+        ret.append([(elem, getattr(arg,elem)) for elem in dir(arg)])
+    return ret
+
 
 def center_window(_window,width=300, height=200):
     # get screen width and height
@@ -89,13 +95,20 @@ class optionmenu():
         self.parent.withdraw()
         textWindow.protocol('WM_DELETE_WINDOW',lambda: (textWindow.destroy(), self.parent.deiconify()))
 
+
+
+
         text1 = Text(textWindow, height=20, width=5)
         text1.insert(END,'\n')
         text1.pack(side=LEFT,fill=Y)
 
+
         text2 = Text(textWindow, height=20, width=50)
         scroll = Scrollbar(textWindow, command=text2.yview)
         text2.configure(yscrollcommand=scroll.set)
+#e.grid()
+
+
         # text2.tag_configure('bold_italics', font=('Arial', 12, 'bold', 'italic'))
         # text2.tag_configure('big', font=('Verdana', 20, 'bold'))
         # text2.tag_configure('color', foreground='#476042',
@@ -112,6 +125,28 @@ class optionmenu():
         # text2.insert(END, 'follow-up\n', 'follow')
         text2.pack(side=LEFT, fill=Y)
         scroll.pack(side=RIGHT, fill=Y)
+
+
+        def changed(*args):
+            flag = text2.edit_modified()
+            #print(flag)
+            if flag:     # prevent from getting called twice
+                print("changed:")
+                #print(event.char)
+                print(text2.index(INSERT))
+                #print(text2.get(1.0,END))
+            ## reset so this will be called on the next change
+            text2.edit_modified(False)
+
+        def check(event):
+            print("check:")
+            print(event.keysym_num)
+            print(text2.index(INSERT))
+            #print(text2.tag_ranges("sel"))
+
+        text2.focus_set()
+        text2.bind('<Key>', check)
+        text2.bind('<<Modified>>', changed)
 
         data = 'op'
         while not (len(data) == 0 or data[-1] == '\0'):
