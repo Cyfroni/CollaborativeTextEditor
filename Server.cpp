@@ -20,26 +20,36 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+ #include <pthread.h>
 //#include <algorithm/string.hpp>
 
 #define MYPORT 8080    // port, z którym będą się łączyli użytkownicy
+#define MYPORT1 8090
+
 #define BACKLOG 10     // jak dużo możę być oczekujących połączeń w kolejce
+
 #define MAX_LENGTH 20
+
 #define DIR_PATH "./Files/"
 
 using namespace std;
-
 
 typedef vector<char> LINE;
 typedef vector<int> LISTENERS;
 typedef vector<LINE> SHEET;
 typedef pair<SHEET, LISTENERS> DOCK;
-typedef unordered_map<string, DOCK> > DATABASE;
+typedef unordered_map<string, DOCK> DATABASE;
+
+void add (DATABASE &, string, string);
 
 struct stat info;
 deque<string> FileList;
-DATABASE dataBase;
+deque<int> ChildrenList;
 fstream fileStream;
+pthread_t t;
+
+        //Launch a thread
+
 
 int fWrongName = 0;
 
@@ -55,10 +65,12 @@ void readDocumentNames(const string& dirName, deque<string>& list)
 	closedir(dirp);
 }
 
+
 void sigchld_handler(int s)
 {
     while(wait(NULL) > 0);
 }
+
 
 int main()
 {
@@ -68,6 +80,8 @@ int main()
     unsigned int sin_size;
     struct sigaction sa;
     int yes = 1;
+
+    //deque<deque<char> > sheet;
 
     if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
@@ -91,6 +105,7 @@ int main()
         perror("bind");
         exit(1);
     }
+
     if(listen(sockfd, BACKLOG) == -1)
     {
         perror("listen");
@@ -106,6 +121,8 @@ int main()
         exit(1);
     }
 
+    DATABASE dataBase;
+
     while(1)
     { // głowna pętla accept()
         sin_size = sizeof(struct sockaddr_in);
@@ -114,6 +131,7 @@ int main()
             perror("accept");
             continue;
         }
+				ChildrenList.push_back(new_fd);
         printf("server: got connection from %s\n", inet_ntoa(their_addr.sin_addr));
         if(!fork())
         { // to jest proces-dziecko
@@ -123,7 +141,7 @@ int main()
 						printf("wyslane\n");
 						int amount;
 						char instr[MAX_LENGTH];
-            char tab[MAX_LENGTH];
+            //char tab[MAX_LENGTH];
 
 						if( stat( DIR_PATH, &info ) != 0 )
 						{
@@ -143,25 +161,31 @@ int main()
                   perror("recv");
                   exit(1);
               }
+
               if(amount == 0)
                 break;
+
               instr[amount] = '\0';
+
               printf("%d: %s  \n", amount, instr);
 
-              if(!strcmp(instr,"nowy"))
+
+
+              if(instr[0]=='N')
               {
-                  amount = recv(new_fd, tab, sizeof(tab) - 1, 0);
-                  tab[amount] = '\0';
+                for(int i=0;i<MAX_LENGTH-1;i++)
+									instr[i]=instr[i+1];
 									for(int j=0; j<FileList.size();j++)
 									{
-										if(FileList[j]==((string)tab).append(".txt"))
+										if(FileList[j]==((string)instr).append(".txt"))
 										{
 											fWrongName = 1;
 										}
+
 									}
 									if(!fWrongName)
 									{
-					          FileList.push_back(((string)tab).append(".txt"));
+					          FileList.push_back(((string)instr).append(".txt"));
 										fileStream.open(DIR_PATH+FileList[FileList.size()-1],ios::out);
 										if(fileStream.good())
 										{
@@ -187,7 +211,7 @@ int main()
 									}
 
 					    }
-							if(!strcmp(instr,"update"))
+							if(instr[0]=='U')
 							{
 								if(FileList.size()==0)
 									send(new_fd, "\n", strlen("\n"), 0);
@@ -197,14 +221,13 @@ int main()
 								cout<<FileList[j]+"\n";
 								}
 							}
-              if(!strcmp(instr,"get"))
+              if(instr[0]=='G')
               {
-                amount = recv(new_fd, tab, sizeof(tab) - 1, 0);
-                tab[amount] = '\0';
-								printf("%d: %s  \n", amount, tab);
+								for(int i=0;i<MAX_LENGTH-1;i++)
+									instr[i]=instr[i+1];
                 ifstream file;
                 string line;
-                file.open ( (string)DIR_PATH + tab );
+                file.open ( (string)DIR_PATH + instr );
                 if (file.is_open())
                 {
 									printf("plik otwarty\n");
@@ -216,6 +239,17 @@ int main()
                   file.close();
                 }
               }
+							if(instr[0]=='Z')
+              {
+								string buffer="kupa";
+								int i=0;
+                auto it = ChildrenList.begin();
+								while(it!=ChildrenList.end()){
+									send(*it++, (buffer+"\n").c_str(),strlen((buffer+"\n").c_str()), 0);
+								}
+
+							}
+
             }
             close(new_fd);
             exit(0);

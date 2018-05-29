@@ -41,7 +41,7 @@ typedef unordered_map<string, DOCK> DATABASE;
 
 void add (DATABASE &, string, string);
 
-int main()
+/*int main()
 {
     string file = "kohan.txt";
 
@@ -67,7 +67,7 @@ int main()
 
 
     return 0;
-}
+}*/
 
 void add(DATABASE &dataBase, string file, string info)
 {
