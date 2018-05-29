@@ -23,17 +23,22 @@
 //#include <algorithm/string.hpp>
 
 #define MYPORT 8080    // port, z którym będą się łączyli użytkownicy
-
 #define BACKLOG 10     // jak dużo możę być oczekujących połączeń w kolejce
-
 #define MAX_LENGTH 20
-
 #define DIR_PATH "./Files/"
 
 using namespace std;
 
+
+typedef vector<char> LINE;
+typedef vector<int> LISTENERS;
+typedef vector<LINE> SHEET;
+typedef pair<SHEET, LISTENERS> DOCK;
+typedef unordered_map<string, DOCK> > DATABASE;
+
 struct stat info;
 deque<string> FileList;
+DATABASE dataBase;
 fstream fileStream;
 
 int fWrongName = 0;
@@ -50,12 +55,10 @@ void readDocumentNames(const string& dirName, deque<string>& list)
 	closedir(dirp);
 }
 
-
 void sigchld_handler(int s)
 {
     while(wait(NULL) > 0);
 }
-
 
 int main()
 {
@@ -65,8 +68,6 @@ int main()
     unsigned int sin_size;
     struct sigaction sa;
     int yes = 1;
-
-    //deque<deque<char> > sheet;
 
     if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
@@ -90,7 +91,6 @@ int main()
         perror("bind");
         exit(1);
     }
-
     if(listen(sockfd, BACKLOG) == -1)
     {
         perror("listen");
@@ -143,15 +143,10 @@ int main()
                   perror("recv");
                   exit(1);
               }
-
               if(amount == 0)
                 break;
-
               instr[amount] = '\0';
-
               printf("%d: %s  \n", amount, instr);
-
-
 
               if(!strcmp(instr,"nowy"))
               {
@@ -163,7 +158,6 @@ int main()
 										{
 											fWrongName = 1;
 										}
-
 									}
 									if(!fWrongName)
 									{
@@ -222,8 +216,6 @@ int main()
                   file.close();
                 }
               }
-
-
             }
             close(new_fd);
             exit(0);
