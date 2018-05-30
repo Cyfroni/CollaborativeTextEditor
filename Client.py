@@ -50,8 +50,9 @@ class optionmenu():
         self.options = set()
         self.om_variable = StringVar(self.parent)
         self.om_variable.trace('w', self.option_select)
-        self.index = ["1.0","1.0",0]
-        self.range = ""
+        self.key = None
+        self.range = None
+        self.last = None
         self.om = OptionMenu(self.parent, self.om_variable, "")
         self.om.grid(column=0, row=0)
 
@@ -75,7 +76,7 @@ class optionmenu():
 
     def update_option_menu(self, data = None):
          if data == 0:
-             sock.send("U")
+             sock.send("UP")
              data = sock.recv(100).split("\n")
              print(data)
          for option in data:
@@ -99,7 +100,6 @@ class optionmenu():
         sock.send("G" + fileName)
         self.parent.withdraw()
         textWindow.protocol('WM_DELETE_WINDOW',lambda: (textWindow.destroy(), self.parent.deiconify()))
-
 
 
 
@@ -132,45 +132,51 @@ class optionmenu():
         text2.pack(side=LEFT, fill=Y)
         scroll.pack(side=RIGHT, fill=Y)
 
-        def elo():
-            input=text2.get(self.index[0],self.index[1])
-            print(input)
-            #send()
-
-        def changed(*args):
-            flag = text2.edit_modified()
-            #print(flag)
-            if flag:     # prevent from getting called twice
-                print("changed:")
-                #print(event.char
-                self.index[1]=text2.index(INSERT)
-                #elo()
-                #print(index1)
-                print(self.index, self.range)
-
-                #print(text2.get(1.0,END))
-            ## reset so this will be called on the next change
-            text2.edit_modified(False)
-
         def check(event):
             print("check:")
-            self.index[2] = event.keysym_num
-            self.index[0]=text2.index(INSERT)
-            input=str(self.index[0])+"-"+str(self.index[1])+"-"+str(self.index[2])
-            if(int(self.index[2]) <=127 or int(self.index[2]) in [ 65288, 65535,65293]):
-                sock.send(input)
-            #input=text2.get(index+"-1c",END)
-            #print(input)
-            #print(what(text2.tag_ranges("sel"))
-            self.range=[x.string for x in text2.tag_ranges("sel")]
-            print(self.range)
+            #print(self.key)
+
+            self.last = text2.index(INSERT)
+            last = self.key
+            self.key = event.keysym_num
+            if self.key in {65288, 65535} or (self.key == 120 and last in {65507, 65508}): #TODO: add ctrls
+                self.range=[x.string for x in text2.tag_ranges("sel")]
 
 
+        def changed(event):
 
+            flag = text2.edit_modified()
+            if flag:
+                print("changed:")
 
+                input = ''
+                if self.key == 65288: #backspace
+                    try:
+                        input = str(self.range[0])+"."+str(self.range[1])+":"
+                    except:
+                        input = str(text2.index(INSERT))+".0.1:"
+                elif self.key == 65535: #del
+                    try:
+                        input = str(self.range[0])+"."+str(self.range[1])+":"
+                    except:
+                        input = str(text2.index(INSERT))+".0.2:"
+                elif self.key == 120: #x
+                    try:
+                        input = str(self.range[0])+"."+str(self.range[1])+":"
+                    except:
+                        input = str(self.last)+"."+ str(text2.index(INSERT))+":x"
+                elif self.key == 118: #v
+                    actual = text2.index(INSERT)
+                    if actual != self.last:
+                        input = str(self.last)+"."+str(actual) + ":" + text2.get(self.last,actual)
+                    else:
+                        input = str(self.last)+"."+ str(text2.index(INSERT))+":v"
+                elif 0 < self.key < 255:
+                    input = str(self.last)+"."+ str(text2.index(INSERT))+":" + chr(self.key)
 
-
-
+                print(input)
+                sock.send("Z" + input)
+            text2.edit_modified(False)
 
         text2.focus_set()
         text2.bind('<Key>', check)
@@ -181,6 +187,8 @@ class optionmenu():
             data = sock.recv(100)
             text2.insert(END, data)
             print(data)
+
+
         center_window(textWindow,300,100)
 
 

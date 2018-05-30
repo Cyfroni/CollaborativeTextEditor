@@ -20,7 +20,11 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
- #include <pthread.h>
+#include <vector>
+#include <unordered_map>
+#include <sstream>
+#include <regex>
+#include "test.cpp"
 //#include <algorithm/string.hpp>
 
 #define MYPORT 8080    // port, z którym będą się łączyli użytkownicy
@@ -34,22 +38,11 @@
 
 using namespace std;
 
-typedef vector<char> LINE;
-typedef vector<int> LISTENERS;
-typedef vector<LINE> SHEET;
-typedef pair<SHEET, LISTENERS> DOCK;
-typedef unordered_map<string, DOCK> DATABASE;
-
-void add (DATABASE &, string, string);
-
 struct stat info;
 deque<string> FileList;
 deque<int> ChildrenList;
 fstream fileStream;
 pthread_t t;
-
-        //Launch a thread
-
 
 int fWrongName = 0;
 
@@ -120,8 +113,14 @@ int main()
         perror("sigaction");
         exit(1);
     }
+    string file = "123.txt";
 
     DATABASE dataBase;
+
+    LISTENERS lis{1,2};
+    SHEET sheet = bufferFile(file);
+    DOCK dock = make_pair(sheet, lis);
+    dataBase.emplace(file, dock);
 
     while(1)
     { // głowna pętla accept()
@@ -168,6 +167,12 @@ int main()
               instr[amount] = '\0';
 
               printf("%d: %s  \n", amount, instr);
+              if (strlen(instr) < 2)
+              {
+                cout<<"zbyt krotka wiadomosc"<<endl;
+                continue;
+              }
+
 
 
 
@@ -211,7 +216,7 @@ int main()
 									}
 
 					    }
-							if(instr[0]=='U')
+							if(!strcmp(instr,"UP"))
 							{
 								if(FileList.size()==0)
 									send(new_fd, "\n", strlen("\n"), 0);
@@ -223,11 +228,10 @@ int main()
 							}
               if(instr[0]=='G')
               {
-								for(int i=0;i<MAX_LENGTH-1;i++)
-									instr[i]=instr[i+1];
+                string info(instr+1, strlen(instr)-1);
                 ifstream file;
                 string line;
-                file.open ( (string)DIR_PATH + instr );
+                file.open ( (string)DIR_PATH + info );
                 if (file.is_open())
                 {
 									printf("plik otwarty\n");
@@ -241,12 +245,15 @@ int main()
               }
 							if(instr[0]=='Z')
               {
-								string buffer="kupa";
-								int i=0;
+								string info(instr+1, strlen(instr)-1);
+								cout<<info<<endl;
+                add(dataBase, file, info);
+                printSheet(dataBase[file].first);
+								/*int i=0;
                 auto it = ChildrenList.begin();
 								while(it!=ChildrenList.end()){
 									send(*it++, (buffer+"\n").c_str(),strlen((buffer+"\n").c_str()), 0);
-								}
+								}*/
 
 							}
 
