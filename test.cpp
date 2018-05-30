@@ -1,28 +1,11 @@
 /*
     ** server.c -- serwer używający gniazd strumieniowych
     */
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/wait.h>
-#include <signal.h>
-#include <deque>
 #include <string>
-#include <iostream>
 #include <fstream>
-#include <dirent.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#include <iostream>
 #include <vector>
 #include <unordered_map>
-#include <sstream>
 #include <regex>
 
 using namespace std;
@@ -38,8 +21,9 @@ typedef unordered_map<string, DOCK> DATABASE;
 void add (DATABASE &, string, string);
 void printSheet(SHEET);
 SHEET bufferFile(string);
+vector<string> split(const string&, const string&)
 
-/*int main()
+void test()
 {
     string file = "kohan.txt";
 
@@ -51,9 +35,8 @@ SHEET bufferFile(string);
 
     DATABASE dataBase;
     dataBase.emplace(file, dock);
-    //int a[0];
     //przychodzi info od klienta
-    string info = "1.2.1.4:qw";
+    string info = "1.2.2.1:\na";
     // ab4
     // 2q
 
@@ -65,17 +48,15 @@ SHEET bufferFile(string);
     add(dataBase, file, info);
     printSheet(dataBase[file].first);
 
-    return 0;
-}*/
+}
 
 void add(DATABASE &dataBase, string file, string info)
 {
-    regex re1(":"), re2("[0-9]+"),re3("[a-z0-9]+"), re4("\n");
+    regex re1(":"), re2("[0-9]+"),re3("[ -~]*"), re4("\n");
     int startIndex[2], endIndex[2];
     string data,change;
     smatch tmp;
 
-    //sregex_iterator next(subject.begin(), subject.end(), re);
     regex_search(info,tmp,re1);
     data = tmp.prefix().str();
     change = tmp.suffix().str();
@@ -87,69 +68,55 @@ void add(DATABASE &dataBase, string file, string info)
     endIndex[1] = atoi((*(++next)).str().c_str());
 
     cout<<"#"<<change<<"#\n";
-    //return;
-    /*cout<<startIndex[0]<<" "<<startIndex[1]<<endl
-      <<endIndex[0]<<" "<<endIndex[1]<< endl << change <<endl;*/
-    if (change == "")
-    {
-
-      return;
-    }
-
-    regex_search ( change, tmp, re4 );
+    int linesAmount = endIndex[0] - startIndex[0];
 
     DOCK &dock = dataBase[file];
     SHEET &sheet = dock.first;
-    int linesAmount = tmp.size();
 
-
-    vector<LINE> newLines(linesAmount,LINE{});
-
-    sheet.insert( sheet.begin() + startIndex[0], newLines.begin(), newLines.end() );
-
-    sregex_iterator next2(change.begin(), change.end(), re3), end;
-    //cout<<(*next2).str()<<endl;
-    int q = 0;
-    int index = startIndex[1];
-    for (sregex_iterator it = next2; it != end; it++ , q++)
+    if (change == "")
     {
-        //printSheet(sheet);
-        if(q == 0 && linesAmount > 0){
-          LINE &line = sheet[startIndex[0]-1];
-          LINE &lineEnd = sheet[endIndex[0]-1];
-          auto str = (*it).str();
-          vector<char> vec(str.begin(), str.end());
-          lineEnd.insert(lineEnd.begin(), line.begin()+startIndex[1], line.end());
-          line.erase(line.begin()+startIndex[1], line.end());
-          line.insert(line.begin()+index, vec.begin(), vec.end());
-
-          index = 0;
-          continue;
-        }
-        LINE &line = sheet[startIndex[0] - 1 + q];
-        auto str = (*it).str();
-        vector<char> vec(str.begin(), str.end());
-        line.insert(line.begin()+index, vec.begin(), vec.end());
-        index = 0;
-
+      if (linesAmount == 0)
+      {
+        LINE &line = sheet[startIndex[0]-1];
+        line.erase(line.begin() + startIndex[1], line.begin() + endIndex[1]);
+      }
+      else
+      {
+        LINE &line = sheet[startIndex[0]-1];
+        LINE &lineEnd = sheet[endIndex[0]-1];
+        line.erase(line.begin() + startIndex[1], line.end());
+        line.insert(line.end(), lineEnd.begin() + endIndex[1], lineEnd.end());
+        sheet.erase(sheet.begin() + startIndex[0], sheet.begin() + endIndex[0]);
+      }
     }
-    // for(auto x : sheet){
-    //   for(auto y : x){
-    //     cout<<y<<" ";
-    //   }
-    //   cout<<endl;
-    // }
+    else
+    {
+      vector<LINE> newLines(linesAmount,LINE{});
+      sheet.insert( sheet.begin() + startIndex[0], newLines.begin(), newLines.end() );
 
-    //regex re("\\d+");
-
-    //start/end points of tokens in str
-    //std::sregex_token_iterator begin(str.begin(), str.end(), re), end;
-
-    //copy(begin, end, std::back_inserter(tokens));
-
-    LISTENERS &lis = dock.second;
-
-
+      auto vecLines = split(change, "\n");
+      int q = 0;
+      int index = startIndex[1];
+      for (auto str : vecLines)
+      {
+          printSheet(sheet);
+          if(q == 0 && linesAmount > 0){
+            LINE &line = sheet[startIndex[0]-1];
+            LINE &lineEnd = sheet[endIndex[0]-1];
+            vector<char> vec(str.begin(), str.end());
+            lineEnd.insert(lineEnd.begin(), line.begin()+startIndex[1], line.end());
+            line.erase(line.begin()+startIndex[1], line.end());
+            line.insert(line.begin()+index, vec.begin(), vec.end());
+          }
+          else{
+            LINE &line = sheet[startIndex[0] - 1 + q];
+            vector<char> vec(str.begin(), str.end());
+            line.insert(line.begin()+index, vec.begin(), vec.end());
+          }
+          index = 0;
+          q++;
+      }
+    }
 }
 
 void printSheet(SHEET sheet)
@@ -185,4 +152,20 @@ SHEET bufferFile(string fileName)
   }
   printSheet(sheet);
   return sheet;
+}
+
+vector<string> split(const string& str, const string& delim)
+{
+    vector<string> tokens;
+    size_t prev = 0, pos = 0;
+    do
+    {
+        pos = str.find(delim, prev);
+        if (pos == string::npos) pos = str.length();
+        string token = str.substr(prev, pos-prev);
+        tokens.push_back(token);
+        prev = pos + delim.length();
+    }
+    while (pos < str.length() && prev < str.length());
+    return tokens;
 }

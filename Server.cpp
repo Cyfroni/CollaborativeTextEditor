@@ -1,42 +1,21 @@
 /*
     ** server.c -- serwer używający gniazd strumieniowych
     */
-
+//g++ -std=c++11 Server.cpp ; echo 1 ; ./a.out
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
-#include <errno.h>
-#include <string.h>
-#include <sys/types.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/wait.h>
-#include <signal.h>
 #include <deque>
-#include <string>
-#include <iostream>
-#include <fstream>
 #include <dirent.h>
-#include <sys/types.h>
 #include <sys/stat.h>
-#include <vector>
-#include <unordered_map>
-#include <sstream>
-#include <regex>
 #include "test.cpp"
-//#include <algorithm/string.hpp>
 
 #define MYPORT 8080    // port, z którym będą się łączyli użytkownicy
 #define MYPORT1 8090
-
 #define BACKLOG 10     // jak dużo możę być oczekujących połączeń w kolejce
-
 #define MAX_LENGTH 20
-
-#define DIR_PATH "./Files/"
-
-using namespace std;
 
 struct stat info;
 deque<string> FileList;
@@ -65,8 +44,13 @@ void sigchld_handler(int s)
 }
 
 
-int main()
+int main(int c, char** v)
 {
+		if(c > 1)
+		{
+			test();
+			return 0;
+		}
     int sockfd, new_fd; // nasłuchuj na sock_fd, nowe połaczenia na new_fd
     struct sockaddr_in my_addr; // informacja o moim adresie
     struct sockaddr_in their_addr; // informacja o adresie osoby łączącej się

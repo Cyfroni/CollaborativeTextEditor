@@ -6,7 +6,6 @@ import tkMessageBox
 import time
 from threading import Thread
 
-
 HOST = '127.0.0.1'
 PORT = 8080
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -16,7 +15,6 @@ sock1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 MAX_LENGTH = 10
 
 window = Tk()
-
 
 #@sock.send
 def sender(fun):
@@ -53,12 +51,10 @@ class optionmenu():
         self.key = None
         self.range = None
         self.last = None
+        self.lastDel = None
         self.om = OptionMenu(self.parent, self.om_variable, "")
         self.om.grid(column=0, row=0)
-
         self.create_button = Button(self.parent, text='Utworz dokument', command=self.create)
-        #self.update_button = Button(self.parent, text='Update', command=self.update_option_menu)
-        #self.update_button.grid(column=0, row=1)
         self.create_button.grid(column=1, row=0)
         self.update_option_menu(0)
 
@@ -96,50 +92,30 @@ class optionmenu():
     def option_select(self, *args):
         fileName = self.om_variable.get()
         textWindow = Tk()
-        #sock.send("get")
         sock.send("G" + fileName)
         self.parent.withdraw()
         textWindow.protocol('WM_DELETE_WINDOW',lambda: (textWindow.destroy(), self.parent.deiconify()))
-
-
 
         text1 = Text(textWindow, height=20, width=5)
         text1.insert(END,'\n')
         text1.pack(side=LEFT,fill=Y)
 
-
-        text2 = Text(textWindow, height=20, width=50)
+        text2 = Text(textWindow, height=20, width=50, undo=True)
         scroll = Scrollbar(textWindow, command=text2.yview)
         text2.configure(yscrollcommand=scroll.set)
 
-        #e.grid()
-
-
-        # text2.tag_configure('bold_italics', font=('Arial', 12, 'bold', 'italic'))
-        # text2.tag_configure('big', font=('Verdana', 20, 'bold'))
-        # text2.tag_configure('color', foreground='#476042',
-        # 					font=('Tempus Sans ITC', 12, 'bold'))
-        # text2.tag_bind('follow', '<1>', lambda e, t=text2: t.insert(END, "Not now, maybe later!"))
-        # text2.insert(END,'\nWilliam Shakespeare\n', 'big')
-        # quote = """
-        # To be, or not to be that is the question:
-        # Whether 'tis Nobler in the mind to suffer
-        # The Slings and Arrows of outrageous Fortune,
-        # Or to take Arms against a Sea of troubles,
-        # """
-        # text2.insert(END, quote, 'color')
-        # text2.insert(END, 'follow-up\n', 'follow')
         text2.pack(side=LEFT, fill=Y)
         scroll.pack(side=RIGHT, fill=Y)
 
         def check(event):
             print("check:")
-            #print(self.key)
 
             self.last = text2.index(INSERT)
+            self.lastDel = text2.index('insert+1c')
+            print(self.last)
             last = self.key
             self.key = event.keysym_num
-            if self.key in {65288, 65535} or (self.key == 120 and last in {65507, 65508}): #TODO: add ctrls
+            if self.key in {65288, 65535} or (self.key == 120 and last in {65507, 65508}):
                 self.range=[x.string for x in text2.tag_ranges("sel")]
 
 
@@ -148,18 +124,17 @@ class optionmenu():
             flag = text2.edit_modified()
             if flag:
                 print("changed:")
-
                 input = ''
                 if self.key == 65288: #backspace
                     try:
                         input = str(self.range[0])+"."+str(self.range[1])+":"
                     except:
-                        input = str(text2.index(INSERT))+".0.1:"
+                        input = str(text2.index(INSERT))+"." + str(self.last) + ":"
                 elif self.key == 65535: #del
                     try:
                         input = str(self.range[0])+"."+str(self.range[1])+":"
                     except:
-                        input = str(text2.index(INSERT))+".0.2:"
+                        input = str(text2.index(INSERT))+"." + str(self.lastDel) + ":"
                 elif self.key == 120: #x
                     try:
                         input = str(self.range[0])+"."+str(self.range[1])+":"
@@ -171,31 +146,35 @@ class optionmenu():
                         input = str(self.last)+"."+str(actual) + ":" + text2.get(self.last,actual)
                     else:
                         input = str(self.last)+"."+ str(text2.index(INSERT))+":v"
-                elif 0 < self.key < 255:
-                    input = str(self.last)+"."+ str(text2.index(INSERT))+":" + chr(self.key)
-
-                print(input)
-                sock.send("Z" + input)
+                elif self.key == 65293:
+                    input = str(self.last)+"."+ str(text2.index(INSERT))+":\n"
+                elif self.key >= 0:
+                    try:
+                        input = str(self.last)+"."+ str(text2.index(INSERT))+":" + chr(self.key)
+                    except:
+                        print("unexpected char = ", self.key)
+                        text2.edit_undo()
+                if len(input) > 0:
+                    print(input)
+                    try:
+                        sock.send("Z" + input)
+                    except:
+                        pass
             text2.edit_modified(False)
 
         text2.focus_set()
         text2.bind('<Key>', check)
         text2.bind('<<Modified>>', changed)
 
+        self.key = -1
         data = 'op'
         while not (len(data) == 0 or data[-1] == '\0'):
             data = sock.recv(100)
             text2.insert(END, data)
             print(data)
-
-
+        text2.delete('end-2c')
+        self.key = 0
         center_window(textWindow,300,100)
-
-
-
-
-
-
 
     def create(self):
         print("create")
