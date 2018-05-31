@@ -21,7 +21,7 @@ typedef unordered_map<string, DOCK> DATABASE;
 void add (DATABASE &, string, string);
 void printSheet(SHEET);
 SHEET bufferFile(string);
-vector<string> split(const string&, const string&)
+vector<string> split(const string&, const string&);
 
 void test()
 {
@@ -49,6 +49,7 @@ void test()
     printSheet(dataBase[file].first);
 
 }
+
 
 void add(DATABASE &dataBase, string file, string info)
 {

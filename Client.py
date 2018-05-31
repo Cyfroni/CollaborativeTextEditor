@@ -9,9 +9,7 @@ from threading import Thread
 HOST = '127.0.0.1'
 PORT = 8080
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-HOST1 = '127.0.0.1'
-PORT1 = 8090
-sock1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
 MAX_LENGTH = 10
 
 window = Tk()
@@ -52,6 +50,7 @@ class optionmenu():
         self.range = None
         self.last = None
         self.lastDel = None
+        self.text2=None
         self.om = OptionMenu(self.parent, self.om_variable, "")
         self.om.grid(column=0, row=0)
         self.create_button = Button(self.parent, text='Utworz dokument', command=self.create)
@@ -66,7 +65,7 @@ class optionmenu():
         #sock.send("nowy")
         print(docName)
         sock.send("N" + docName)
-        self.update_option_menu([docName + ".txt"])
+        self.update_option_menu(0)
         _window.destroy()
         self.parent.deiconify()
 
@@ -100,28 +99,28 @@ class optionmenu():
         text1.insert(END,'\n')
         text1.pack(side=LEFT,fill=Y)
 
-        text2 = Text(textWindow, height=20, width=50, undo=True)
-        scroll = Scrollbar(textWindow, command=text2.yview)
-        text2.configure(yscrollcommand=scroll.set)
+        self.text2 = Text(textWindow, height=20, width=50, undo=True)
+        scroll = Scrollbar(textWindow, command=self.text2.yview)
+        self.text2.configure(yscrollcommand=scroll.set)
 
-        text2.pack(side=LEFT, fill=Y)
+        self.text2.pack(side=LEFT, fill=Y)
         scroll.pack(side=RIGHT, fill=Y)
 
         def check(event):
             print("check:")
 
-            self.last = text2.index(INSERT)
-            self.lastDel = text2.index('insert+1c')
+            self.last = self.text2.index(INSERT)
+            self.lastDel = self.text2.index('insert+1c')
             print(self.last)
             last = self.key
             self.key = event.keysym_num
             if self.key in {65288, 65535} or (self.key == 120 and last in {65507, 65508}):
-                self.range=[x.string for x in text2.tag_ranges("sel")]
+                self.range=[x.string for x in self.text2.tag_ranges("sel")]
 
 
         def changed(event):
 
-            flag = text2.edit_modified()
+            flag = self.text2.edit_modified()
             if flag:
                 print("changed:")
                 input = ''
@@ -129,50 +128,50 @@ class optionmenu():
                     try:
                         input = str(self.range[0])+"."+str(self.range[1])+":"
                     except:
-                        input = str(text2.index(INSERT))+"." + str(self.last) + ":"
+                        input = str(self.text2.index(INSERT))+"." + str(self.last) + ":"
                 elif self.key == 65535: #del
                     try:
                         input = str(self.range[0])+"."+str(self.range[1])+":"
                     except:
-                        input = str(text2.index(INSERT))+"." + str(self.lastDel) + ":"
+                        input = str(self.text2.index(INSERT))+"." + str(self.lastDel) + ":"
                 elif self.key == 120: #x
                     try:
                         input = str(self.range[0])+"."+str(self.range[1])+":"
                     except:
-                        input = str(self.last)+"."+ str(text2.index(INSERT))+":x"
+                        input = str(self.last)+"."+ str(self.text2.index(INSERT))+":x"
                 elif self.key == 118: #v
-                    actual = text2.index(INSERT)
+                    actual = self.text2.index(INSERT)
                     if actual != self.last:
-                        input = str(self.last)+"."+str(actual) + ":" + text2.get(self.last,actual)
+                        input = str(self.last)+"."+str(actual) + ":" + self.text2.get(self.last,actual)
                     else:
-                        input = str(self.last)+"."+ str(text2.index(INSERT))+":v"
+                        input = str(self.last)+"."+ str(self.text2.index(INSERT))+":v"
                 elif self.key == 65293:
-                    input = str(self.last)+"."+ str(text2.index(INSERT))+":\n"
+                    input = str(self.last)+"."+ str(self.text2.index(INSERT))+":\n"
                 elif self.key >= 0:
                     try:
-                        input = str(self.last)+"."+ str(text2.index(INSERT))+":" + chr(self.key)
+                        input = str(self.last)+"."+ str(self.text2.index(INSERT))+":" + chr(self.key)
                     except:
                         print("unexpected char = ", self.key)
-                        text2.edit_undo()
+                        self.text2.edit_undo()
                 if len(input) > 0:
                     print(input)
                     try:
                         sock.send("Z" + input)
                     except:
                         pass
-            text2.edit_modified(False)
+            self.text2.edit_modified(False)
 
-        text2.focus_set()
-        text2.bind('<Key>', check)
-        text2.bind('<<Modified>>', changed)
+        self.text2.focus_set()
+        self.text2.bind('<Key>', check)
+        self.text2.bind('<<Modified>>', changed)
 
         self.key = -1
         data = 'op'
         while not (len(data) == 0 or data[-1] == '\0'):
             data = sock.recv(100)
-            text2.insert(END, data)
+            self.text2.insert(END, data)
             print(data)
-        text2.delete('end-2c')
+        self.text2.delete('end-2c')
         self.key = 0
         center_window(textWindow,300,100)
 
@@ -189,20 +188,55 @@ class optionmenu():
         back.grid(column=0, row=1)
         ok.grid(column=1, row=1)
         center_window(fileNameWindow,300,100)
-def receive():
-    while 1:
-        print(sock1.recv(1000))
+    def update(info):
+        index,data=info.split(":")
+
+        index=index.split(".")
+        index1=index[0]+"."+index[1]
+        index2=index[2]+"."+index[3]
+        if(data==""):
+            self.text2.remove(index1,index2)
+        else:
+            self.text2.insert(index1,data)
+
+class ClientThread ( Thread ):
+
+   # Override Thread's __init__ method to accept the parameters needed:
+   def __init__ ( self, socket,o_menu):
+       self.o_menu=o_menu
+       self.socket = socket
+
+       Thread.__init__ ( self )
+
+   def run ( self ):
+       while True:
+           self.o_menu.update(self.socket.recv(100))
+
 
 try:
     sock.connect((HOST, PORT))
-    #sock1.connect((HOST1,PORT1))
-    print(sock.recv(100))
-    optionmenu(window)
-    center_window(window,300,100)
-    #thread1=Thread(target=receive)
-    #thread1.start()
-    #thread1.join()
-    window.mainloop()
 
+    #sock1.connect((HOST1,PORT1))
+    #print(sock.recv(100))
+
+    #create an INET, STREAMing socket
+    serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    port=sock.recv(100)
+    port=ord(port[1])*16*16+ord(port[0])
+    serversocket.bind((HOST,port))
+    #become a server socket
+    print("1")
+    serversocket.listen(1)
+    print("2")
+    (clientsocket, address) = serversocket.accept()
+    print("3")
+    o_menu=optionmenu(window)
+    center_window(window,300,100)
+    #now do something with the clientsocket
+    #in this case, we'll pretend this is a threaded server
+    ct = ClientThread(clientsocket,o_menu)
+    ct.start()
+
+    window.mainloop()
 except Exception as e:
     print(e)
