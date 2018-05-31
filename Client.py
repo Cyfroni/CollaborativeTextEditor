@@ -87,8 +87,12 @@ class optionmenu():
             menu.add_command(label=string,
                              command=lambda value=string: self.om_variable.set(value))
 
-    def option_select(self, *args):
+    def option_select(self, *args): # TODO: przydaloby sie updatowac liste przed wyborem (albo przycisk update?)
+                                    # albo jak ktos stworzy to informowac reszte - raczej nie chcemy
+                                    # tego robic xd
         fileName = self.om_variable.get()
+        if len(fileName) == 0:
+            return
         textWindow = Tk()
         sock.send("G" + fileName)
         self.parent.withdraw()
@@ -111,7 +115,8 @@ class optionmenu():
             self.last = self.text2.index(INSERT)
             self.lastDel = self.text2.index('insert+1c')
             print(self.last)
-            last = self.key
+            last = self.key # TODO: trzeba dodac obluge przytrzymania ctrl - jak ktos wklei pare razy,
+                            # albo wcisnie ctrl+x+v+...
             self.key = event.keysym_num
             if self.key in {65288, 65535} or (self.key == 120 and last in {65507, 65508}):
                 self.range = [x.string for x in self.text2.tag_ranges("sel")]
@@ -150,7 +155,8 @@ class optionmenu():
                         input = str(self.last) + "." + str(self.text2.index(INSERT)) + ":" + chr(self.key)
                     except:
                         print("unexpected char = ", self.key)
-                        self.text2.edit_undo()
+                        self.text2.edit_undo()  #TODO: dodac wyjatek dla informacji od matki
+                                                #TODO: cofac kazda zmiane w pliku - updatujemy tym co matka przysle
                 if len(input) > 0:
                     print(input)
                     try:
@@ -163,7 +169,7 @@ class optionmenu():
         self.text2.bind('<Key>', check)
         self.text2.bind('<<Modified>>', changed)
 
-        self.key = -1
+        self.key = -1 #TODO: wymyslic lepszy semafor
         data = 'op'
         while not (len(data) == 0 or data[-1] == '\0'):
             data = sock.recv(100)
@@ -194,7 +200,7 @@ class optionmenu():
         index1 = index[0] + "." + index[1]
         index2 = index[2] + "." + index[3]
         if data == "":
-            self.text2.remove(index1, index2)
+            self.text2.remove(index1, index2) #TODO: potrzebny semafor
         else:
             self.text2.insert(index1, data)
 
@@ -226,4 +232,4 @@ try:
 
     window.mainloop()
 except Exception as e:
-    print(e)
+    print(e) #TODO: dodac informowanie serwera o rozlaczeniu lub zrobienie jakichs check'ow w serwerze

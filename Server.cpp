@@ -19,14 +19,16 @@
 
 struct stat info;
 deque<string> FileList;
-deque<int> ChildrenList;
+deque<int> ChildrenList; //TODO: change to set? do we actually need this?
 fstream fileStream;
 pthread_t thread_id;
 void *connection_handler(void *);
 bool flag = 0;
-string file = "123.txt";
+//string file = "123.txt";
 DATABASE dataBase;
-deque<string> messageQueue;
+deque<pair<string,string> > messageQueue;
+//unordered_map<int, int> userPorts;
+
 struct arg_struct {
 	int new_fd;
 	int PORT_num;
@@ -54,15 +56,23 @@ void sigchld_handler(int s)
 }
 void *listening(void*)
 {
-	string info;
+	pair<string,string> message;
 
 	while (1)
 	{
 		while (!messageQueue.empty())
 		{
-			info = messageQueue.front();
+			message = messageQueue.front();
 			messageQueue.pop_front();
-			cout << "Matula:  " << info << endl;
+			auto &listeners = dataBase[message.second].second;
+			string info = message.first;
+			cout << "Matula:  " << info << "###";
+			for (auto x : listeners)
+			{
+				cout<<x<<" ";
+				//send(x, info.c_str(), sizeof(info), 0); //najpierw klient musi dobrze obslugiwac wiadomosci
+			}
+			cout<<endl;
 		}
 
 	}
@@ -122,10 +132,7 @@ int main(int c, char** v)
 	}
 
 
-	LISTENERS lis{ 1,2 };
-	SHEET sheet = bufferFile(file);
-	DOCK dock = make_pair(sheet, lis);
-	dataBase.emplace(file, dock);
+
 	pthread_create(&thread_id, NULL, listening, 0);
 	while (1)
 	{ // głowna pętla accept()
@@ -169,6 +176,7 @@ int main(int c, char** v)
 			sleep(1);
 			cout << "RIP" << endl;
 		}
+		//userPorts.emplace(new_fd, args.PORT_num);
 	}
 	return 0;
 }
@@ -178,7 +186,7 @@ void *connection_handler(void* socket_desc)
 	// to jest proces-dziecko
 	struct arg_struct arg = *(struct arg_struct*)socket_desc;
 	int new_fd = arg.new_fd;
-	cout << arg.PORT_num << endl;
+	string fileOpen = "";
 	sleep(1);
 	//close(sockfd); // dziecko nie potrzebuje gniazda nasłuchującego
 	if (send(new_fd, &arg.PORT_num, sizeof(int), 0) == -1)
@@ -248,13 +256,16 @@ void *connection_handler(void* socket_desc)
 				else
 				{
 					printf("Error in file creation\n");
-					send(new_fd, "Error in file creation\n", 23, 0);
+					send(new_fd, "Error in file creation\n", 23, 0); //TODO: zapewne podobnie jak nizej
 				}
 			}
 			else
 			{
 				printf("File with such a name already exists\n");
-				send(new_fd, "File with such a name already exists\n", 37, 0);
+				send(new_fd, "File with such a name already exists\n", 37, 0); //TODO: nie dziala tak jak
+																																			// chcemy - po stronie klienta
+																																			// tworzy sie plik o nazwie
+																																			// "File with..."
 				fWrongName = 0;
 			}
 
@@ -280,16 +291,37 @@ void *connection_handler(void* socket_desc)
 				printf("plik otwarty\n");
 				while (getline(file, line))
 				{
-					send(new_fd, (line + "\n").c_str(), strlen((line + "\n").c_str()), 0);
+					send(new_fd, (line + "\n").c_str(), strlen((line + "\n").c_str()), 0); //TODO: this should send data from dataBase, not file
 				}
 				send(new_fd, "\0", sizeof(char), 0);
 				file.close();
+				fileOpen = info;
+				if (dataBase.count(fileOpen) > 0)
+					dataBase[fileOpen].second.insert(new_fd);
+				else
+				{
+					LISTENERS lis({ new_fd });
+					SHEET sheet = bufferFile(fileOpen);
+					DOCK dock = make_pair(sheet, lis);
+					dataBase.emplace(fileOpen, dock);
+				}
 			}
+		}
+		if (!strcmp(instr, "UG")) //close file
+		{
+			dataBase[fileOpen].second.erase(new_fd);
+
+			if (dataBase[fileOpen].second.size() == 0)
+			{
+				//TODO: update file - last connection ended
+				//TODO: remove dock from database - need to clear data
+			}
+			fileOpen = "";
 		}
 		if (instr[0] == 'Z')
 		{
 			string info(instr + 1, strlen(instr) - 1);
-			messageQueue.push_back(info);
+			messageQueue.emplace_back(info,fileOpen);
 			//cout<<info<<endl;
 			//add(dataBase, file, info);
 			//printSheet(dataBase[file].first);
@@ -298,10 +330,13 @@ void *connection_handler(void* socket_desc)
 			while(it!=ChildrenList.end()){
 				send(*it++, (buffer+"\n").c_str(),strlen((buffer+"\n").c_str()), 0);
 			}*/
-
 		}
-
+		if (!strcmp(instr, "EC"))
+		{
+			//TODO: potrzebna obsługa jak ktos sie odlączy
+		}
 	}
+
 	close(new_fd);
 	exit(0);
 }

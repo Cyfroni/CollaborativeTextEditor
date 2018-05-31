@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include <regex>
 
 using namespace std;
@@ -10,7 +11,7 @@ using namespace std;
 #define DIR_PATH "./Files/"
 
 typedef vector<char> LINE;
-typedef vector<int> LISTENERS;
+typedef unordered_set<int> LISTENERS;
 typedef vector<LINE> SHEET;
 typedef pair<SHEET, LISTENERS> DOCK;
 typedef unordered_map<string, DOCK> DATABASE;
@@ -25,7 +26,7 @@ void test()
 	string file = "kohan.txt";
 	LINE line1{ 'a','b','4' }, line2{ '2','q' };
 	SHEET sheet{ line1, line2 };
-	LISTENERS lis{ 1,2 };
+	LISTENERS lis({ 1,2 });
 
 	DOCK dock = make_pair(sheet, lis);
 
