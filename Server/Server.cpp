@@ -127,7 +127,6 @@ int main(int c, char** v)
 		while (connect(mother_socket, (sockaddr*)&addrRemote, sizeof(addrRemote)) == -1)
 		{
 			sleep(1);
-			cout << "RIP" << endl;
 		}
 		ChildrenSockets.emplace(args.sock, mother_socket);
 	}
@@ -186,7 +185,6 @@ void *connection_handler(void* socket_desc)
 	sleep(1);
 	if (send(sock, &arg.PORT_num, sizeof(int), 0) == -1)
 		perror("send");
-	perror("wyslane\n");
 	int amount;
 	char instr[MAX_LENGTH];
 
@@ -230,7 +228,7 @@ void *connection_handler(void* socket_desc)
 			if (!fWrongName)
 			{
 				FileList.push_back(((string)instr).append(".txt"));
-				fstream fileStream; 
+				fstream fileStream;
 				fileStream.open(DIR_PATH + FileList[FileList.size() - 1], ios::out);
 				if (fileStream.good())
 				{
@@ -295,7 +293,7 @@ void *connection_handler(void* socket_desc)
 				DOCK &dock = dataBase[fileOpen];
 				SHEET &sheet = dock.first;
 				updateFile(fileOpen, sheet);
-				//TODO: remove dock from database - need to clear data
+				dataBase.erase(fileOpen);
 			}
 			fileOpen = "";
 		}

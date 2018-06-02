@@ -101,9 +101,7 @@ void add(DATABASE &dataBase, string file, string info)
 		if (linesAmount == 0)
 		{
 			LINE &line = sheet[startIndex[0] - 1];
-			cout<<"elko"<<endl;
 			line.erase(line.begin() + startIndex[1], line.begin() + endIndex[1]);
-			cout<<"elko1"<<endl;
 		}
 		else
 		{
@@ -137,13 +135,9 @@ void add(DATABASE &dataBase, string file, string info)
 				line.insert(line.begin() + index, vec.begin(), vec.end());
 			}
 			else {
-				cout<<"1"<<endl;
 				LINE &line = sheet[startIndex[0] - 1 + q];
-				cout<<"2"<<endl;
 				vector<char> vec(str.begin(), str.end());
-				cout<<"3"<<endl;
 				line.insert(line.begin() + index, vec.begin(), vec.end());
-				cout<<"4"<<endl;
 			}
 			index = 0;
 			q++;
@@ -182,7 +176,6 @@ SHEET bufferFile(string fileName)
 		}
 		file.close();
 	}
-	cout<<"soz"<<sheet.size()<<endl;
 	if(sheet.size()==0)
 		sheet.push_back(LINE{});
 	printSheet(sheet);
