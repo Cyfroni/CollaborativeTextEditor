@@ -6,6 +6,7 @@ import tkMessageBox
 import time
 from threading import Thread
 
+
 HOST = '127.0.0.1'
 PORT = 8080
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -13,7 +14,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 MAX_LENGTH = 10
 
 window = Tk()
-
+queue=deque()
 
 def sender(fun):
     def wrapper(message):
@@ -45,6 +46,7 @@ class optionmenu():
     def __init__(self, parent):
         def update_option_menu_button(  event):
             self.update_option_menu(0)
+        self.mother=None
         self.parent = parent
         self.options = set()
         self.om_variable = StringVar(self.parent)
@@ -59,6 +61,7 @@ class optionmenu():
         self.create_button = Button(self.parent, text='Utworz dokument', command=self.create)
         self.create_button.grid(column=1, row=0)
         self.om.bind('<Button-1>',update_option_menu_button)
+        self.update_mot()
 
     def askForNewDoc(self, _window, e):
         docName = e.get()
@@ -90,9 +93,7 @@ class optionmenu():
             menu.add_command(label=string,
                              command=lambda value=string: self.om_variable.set(value))
 
-    def option_select(self, *args): # TODO: przydaloby sie updatowac liste przed wyborem (albo przycisk update?)
-                                    # albo jak ktos stworzy to informowac reszte - raczej nie chcemy
-                                    # tego robic xd
+    def option_select(self, *args):
         fileName = self.om_variable.get()
         if len(fileName) == 0:
             return
@@ -116,6 +117,7 @@ class optionmenu():
             print("check:")
 
             self.last = self.text2.index(INSERT)
+
             self.lastDel = self.text2.index('insert+1c')
             print(self.last)
             last = self.key # TODO: trzeba dodac obluge przytrzymania ctrl - jak ktos wklei pare razy,
@@ -123,12 +125,18 @@ class optionmenu():
             self.key = event.keysym_num
             if self.key in {65288, 65535} or (self.key == 120 and last in {65507, 65508}):
                 self.range = [x.string for x in self.text2.tag_ranges("sel")]
-
+            print("Wszystko: ",self.last,self.lastDel,last,self.key, self.range)
         def changed(event):
-
+            if self.mother==True:
+                self.text2.edit_modified(False)
+                #check(event)
+                return
+            print("Change1")
             flag = self.text2.edit_modified()
+
             if flag:
-                print("changed:")
+
+                print("changed2:")
                 input = ''
                 if self.key == 65288:  # backspace
                     try:
@@ -153,9 +161,11 @@ class optionmenu():
                         input = str(self.last) + "." + str(self.text2.index(INSERT)) + ":v"
                 elif self.key == 65293:
                     input = str(self.last) + "." + str(self.text2.index(INSERT)) + ":\n"
-                elif self.key >= 0:
+                else:
                     try:
+
                         input = str(self.last) + "." + str(self.text2.index(INSERT)) + ":" + chr(self.key)
+                        print("xDDDD")
                     except:
                         print("unexpected char = ", self.key)
                         self.text2.edit_undo()  #TODO: dodac wyjatek dla informacji od matki
@@ -163,23 +173,33 @@ class optionmenu():
                 if len(input) > 0:
                     print(input)
                     try:
+                        print("ile jesszcze")
+
+                        self.text2.edit_undo()
+                        print("send")
                         sock.send("Z" + input)
-                    except:
-                        pass
+                        print("succesful")
+                    except Exception as e:
+                        print(e)
+                        print("smiec")
+                    finally:
+                        print("obarska")
             self.text2.edit_modified(False)
 
         self.text2.focus_set()
+
         self.text2.bind('<Key>', check)
         self.text2.bind('<<Modified>>', changed)
 
-        self.key = -1 #TODO: wymyslic lepszy semafor
+        self.mother=True #TODO: wymyslic lepszy semafor
         data = 'op'
         while not (len(data) == 0 or data[-1] == '\0'):
             data = sock.recv(100)
             self.text2.insert(END, data)
             print(data)
         self.text2.delete('end-2c')
-        self.key = 0
+        self.mother=False
+
         center_window(textWindow, 300, 100)
 
     def create(self):
@@ -197,15 +217,28 @@ class optionmenu():
         ok.grid(column=1, row=1)
         center_window(fileNameWindow, 300, 100)
 
-    def update(info):
-        index, data = info.split(":")
-        index = index.split(".")
-        index1 = index[0] + "." + index[1]
-        index2 = index[2] + "." + index[3]
-        if data == "":
-            self.text2.remove(index1, index2) #TODO: potrzebny semafor
-        else:
-            self.text2.insert(index1, data)
+    def update_mot(self):
+        try:
+            info=queue.popleft()
+            index, data = info.split(":")
+            index = index.split(".")
+            index1 = index[0] + "." + index[1]
+            index2 = index[2] + "." + index[3]
+            print("indeksy", index,index1,index2,data)
+            print("matka na true")
+            self.mother=True
+            if data == "":
+                self.text2.remove(index1, index2) #TODO: potrzebny semafor
+            else:
+                print("updatujemy")
+                self.text2.insert(index1, data)
+            print("matka na false")
+            self.mother=False
+
+        except:
+            pass
+        finally:
+            window.after(1000,self.update_mot)
 
 
 class ClientThread(Thread):
@@ -217,10 +250,15 @@ class ClientThread(Thread):
 
     def run(self):
         while True:
-            self.o_menu.update(self.socket.recv(100))
+            print("czeka")
+            info=self.socket.recv(100)
+            print("#",info)
+            time.sleep(0.1)
+            queue.append(info)
 
 
 try:
+
     sock.connect((HOST, PORT))
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     port = sock.recv(100)
@@ -232,7 +270,6 @@ try:
     center_window(window, 300, 100)
     ct = ClientThread(clientsocket, o_menu)
     ct.start()
-
     window.mainloop()
 except Exception as e:
     print(e) #TODO: dodac informowanie serwera o rozlaczeniu lub zrobienie jakichs check'ow w serwerze

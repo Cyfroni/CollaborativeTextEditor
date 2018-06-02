@@ -19,7 +19,7 @@
 
 struct stat info;
 deque<string> FileList;
-deque<int> ChildrenList; //TODO: change to set? do we actually need this?
+unordered_map<int,int> ChildrenSockets;
 fstream fileStream;
 pthread_t thread_id;
 void *connection_handler(void *);
@@ -70,7 +70,7 @@ void *listening(void*)
 			for (auto x : listeners)
 			{
 				cout<<x<<" ";
-				//send(x, info.c_str(), sizeof(info), 0); //najpierw klient musi dobrze obslugiwac wiadomosci
+				send(ChildrenSockets[x], info.c_str(), strlen(info.c_str()), 0); //najpierw klient musi dobrze obslugiwac wiadomosci
 			}
 			cout<<endl;
 		}
@@ -144,7 +144,6 @@ int main(int c, char** v)
 			continue;
 		}
 		args.PORT_num = port_generator++;
-		ChildrenList.push_back(new_fd);
 		printf("server: got connection from %s\n", inet_ntoa(their_addr.sin_addr));
 		pthread_create(&thread_id, NULL, connection_handler, &args);
 		pthread_detach(thread_id);
@@ -176,7 +175,7 @@ int main(int c, char** v)
 			sleep(1);
 			cout << "RIP" << endl;
 		}
-		//userPorts.emplace(new_fd, args.PORT_num);
+		ChildrenSockets.emplace(args.new_fd, sockfd1);
 	}
 	return 0;
 }
