@@ -125,6 +125,8 @@ class Menu:
             if self.key in {65288, 65535} or (self.key == 120 and last in {65507, 65508}):
                 self.range = [x.string for x in self.text2.tag_ranges("sel")]
             print("Wszystko: ", self.last, self.lastDel, last, self.key, self.range)
+            #self.text2.edit_reset()
+            self.text2.edit_separator()
 
         def changed(event):
             if self.mother:
@@ -172,7 +174,7 @@ class Menu:
                     print(input)
                     try:
                         print("ile jesszcze")
-                        self.text2.edit_undo()  # TODO: wywala sie, podczas wpisania dwoch znakow po sobie
+                        self.text2.edit_undo()
                         print("send")
                         sock.send("Z" + input)
                         print("succesful")
@@ -271,7 +273,8 @@ try:
 except Exception as e:
     print(e)
 finally:
-    client_socket.close()
-    server_socket.close()
-    ct._Thread__stop()
     sock.close()
+
+    server_socket.close()
+    client_socket.close()
+    ct._Thread__stop()

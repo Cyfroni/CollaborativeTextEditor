@@ -101,12 +101,15 @@ void add(DATABASE &dataBase, string file, string info)
 		if (linesAmount == 0)
 		{
 			LINE &line = sheet[startIndex[0] - 1];
+			cout<<"elko"<<endl;
 			line.erase(line.begin() + startIndex[1], line.begin() + endIndex[1]);
+			cout<<"elko1"<<endl;
 		}
 		else
 		{
 			LINE &line = sheet[startIndex[0] - 1];
 			LINE &lineEnd = sheet[endIndex[0] - 1];
+
 			line.erase(line.begin() + startIndex[1], line.end());
 			line.insert(line.end(), lineEnd.begin() + endIndex[1], lineEnd.end());
 			sheet.erase(sheet.begin() + startIndex[0], sheet.begin() + endIndex[0]);
