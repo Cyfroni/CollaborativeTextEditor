@@ -92,7 +92,7 @@ class Menu:
             menu.add_command(label=string,
                              command=lambda value=string: self.om_variable.set(value))
 
-    def option_select(self):
+    def option_select(self,*args):
         file_name = self.om_variable.get()
         if len(file_name) == 0:
             return
@@ -126,7 +126,7 @@ class Menu:
                 self.range = [x.string for x in self.text2.tag_ranges("sel")]
             print("Wszystko: ", self.last, self.lastDel, last, self.key, self.range)
 
-        def changed():
+        def changed(event):
             if self.mother:
                 self.text2.edit_modified(False)
                 return

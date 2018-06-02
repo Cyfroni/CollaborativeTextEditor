@@ -8,7 +8,7 @@
 #include <dirent.h>
 #include <pthread.h>
 #include <sys/stat.h>
-#include "test.cpp"
+#include "DataBase.cpp"
 #include <netdb.h>
 
 #define MYPORT 8080    // port, z którym będą się łączyli użytkownicy
@@ -31,7 +31,7 @@ struct arg_struct {
 void *connection_handler(void *);
 void readDocumentNames(const string&, deque<string>&);
 void sigchld_handler(int);
-void *listening(void*)
+void *listening(void*);
 
 int main(int c, char** v)
 {
@@ -230,7 +230,8 @@ void *connection_handler(void* socket_desc)
 			if (!fWrongName)
 			{
 				FileList.push_back(((string)instr).append(".txt"));
-				fstream fileStream.open(DIR_PATH + FileList[FileList.size() - 1], ios::out);
+				fstream fileStream; 
+				fileStream.open(DIR_PATH + FileList[FileList.size() - 1], ios::out);
 				if (fileStream.good())
 				{
 					perror("Creation went OK \n");
