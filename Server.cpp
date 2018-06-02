@@ -156,13 +156,13 @@ int main(int c, char** v)
 		if ((sockfd1 = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 		{
 			perror("socket");
-			exit(1);
+			continue;
 		}
 
 		if (setsockopt(sockfd1, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
 		{
 			perror("setsockopt");
-			exit(1);
+			continue;
 		}
 
 		struct sockaddr_in addrRemote; // informacja o adresie osoby łączącej się
@@ -340,5 +340,5 @@ void *connection_handler(void* socket_desc)
 	}
 
 	close(new_fd);
-	exit(0);
+	cout<<"hahahah"<<endl;
 }

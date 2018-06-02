@@ -191,7 +191,7 @@ class optionmenu():
         self.text2.bind('<Key>', check)
         self.text2.bind('<<Modified>>', changed)
 
-        self.mother=True 
+        self.mother=True
         data = 'op'
         while not (len(data) == 0 or data[-1] == '\0'):
             data = sock.recv(100)
@@ -252,8 +252,10 @@ class ClientThread(Thread):
         while True:
             print("czeka")
             info=self.socket.recv(100)
+            if(info==''):
+                break
             print("#",info)
-            time.sleep(0.1)
+            #time.sleep(0.1)
             queue.append(info)
 
 
@@ -272,4 +274,10 @@ try:
     ct.start()
     window.mainloop()
 except Exception as e:
-    print(e) #TODO: dodac informowanie serwera o rozlaczeniu lub zrobienie jakichs check'ow w serwerze
+    print(e)
+finally:
+    print("Podraza")
+    clientsocket.close()
+    serversocket.close()
+    ct._Thread__stop()
+    sock.close()
