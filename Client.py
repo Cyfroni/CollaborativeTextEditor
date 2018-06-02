@@ -122,6 +122,7 @@ class optionmenu():
             print(self.last)
             last = self.key # TODO: trzeba dodac obluge przytrzymania ctrl - jak ktos wklei pare razy,
                             # albo wcisnie ctrl+x+v+...
+                            #https://stackoverflow.com/questions/39606019/tkinter-using-two-keys-at-the-same-time?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
             self.key = event.keysym_num
             if self.key in {65288, 65535} or (self.key == 120 and last in {65507, 65508}):
                 self.range = [x.string for x in self.text2.tag_ranges("sel")]
@@ -168,14 +169,14 @@ class optionmenu():
                         print("xDDDD")
                     except:
                         print("unexpected char = ", self.key)
-                        self.text2.edit_undo()  #TODO: dodac wyjatek dla informacji od matki
-                                                #TODO: cofac kazda zmiane w pliku - updatujemy tym co matka przysle
+                        self.text2.edit_undo()
+
                 if len(input) > 0:
                     print(input)
                     try:
                         print("ile jesszcze")
 
-                        self.text2.edit_undo()
+                        self.text2.edit_undo()#TODO: wywala sie, podczas wpisania dwoch znakow po sobie
                         print("send")
                         sock.send("Z" + input)
                         print("succesful")
@@ -228,7 +229,7 @@ class optionmenu():
             print("matka na true")
             self.mother=True
             if data == "":
-                self.text2.remove(index1, index2) #TODO: potrzebny semafor
+                self.text2.remove(index1, index2)
             else:
                 print("updatujemy")
                 self.text2.insert(index1, data)

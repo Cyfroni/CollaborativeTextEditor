@@ -191,7 +191,7 @@ void *connection_handler(void* socket_desc)
 	//close(sockfd); // dziecko nie potrzebuje gniazda nasłuchującego
 	if (send(new_fd, &arg.PORT_num, sizeof(int), 0) == -1)
 		perror("send");
-	printf("wyslane\n");
+	perror("wyslane\n");
 	int amount;
 	char instr[MAX_LENGTH];
 
@@ -211,11 +211,11 @@ void *connection_handler(void* socket_desc)
 	}
 	while (1)
 	{
-		printf("czekam\n");
+		perror("czekam\n");
 		if ((amount = recv(new_fd, instr, sizeof(instr) - 1, 0)) == -1)
 		{
 			perror("recv");
-			exit(1);
+
 		}
 
 		if (amount == 0)
@@ -248,24 +248,21 @@ void *connection_handler(void* socket_desc)
 				fileStream.open(DIR_PATH + FileList[FileList.size() - 1], ios::out);
 				if (fileStream.good())
 				{
-					printf("Creation went OK \n");
+					perror("Creation went OK \n");
 					fileStream << "\0";
 					fileStream.flush();			/*Forcing buffer to go to harddisc's memory*/
 					fileStream.close(); 			/*Close the file when finished*/
 				}
 				else
 				{
-					printf("Error in file creation\n");
-					send(new_fd, "Error in file creation\n", 23, 0); //TODO: zapewne podobnie jak nizej
+					perror("Error in file creation\n");
+
 				}
 			}
 			else
 			{
-				printf("File with such a name already exists\n");
-				send(new_fd, "File with such a name already exists\n", 37, 0); //TODO: nie dziala tak jak
-																																			// chcemy - po stronie klienta
-																																			// tworzy sie plik o nazwie
-																																			// "File with..."
+				perror("File with such a name already exists\n");
+
 				fWrongName = 0;
 			}
 
@@ -324,21 +321,11 @@ void *connection_handler(void* socket_desc)
 		{
 			string info(instr + 1, strlen(instr) - 1);
 			messageQueue.emplace_back(info,fileOpen);
-			//cout<<info<<endl;
-			//add(dataBase, file, info);
-			//printSheet(dataBase[file].first);
-			/*int i=0;
-			auto it = ChildrenList.begin();
-			while(it!=ChildrenList.end()){
-				send(*it++, (buffer+"\n").c_str(),strlen((buffer+"\n").c_str()), 0);
-			}*/
-		}
-		if (!strcmp(instr, "EC"))
-		{
-			//TODO: potrzebna obsługa jak ktos sie odlączy
-		}
-	}
 
+		}
+
+	}
+	//TODO: potrzebna obsługa jak ktos sie odlączy
 	close(new_fd);
 	cout<<"hahahah"<<endl;
 }
