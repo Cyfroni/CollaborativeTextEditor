@@ -43,7 +43,8 @@ def center_window(_window, width=300, height=200):
 
 class optionmenu():
     def __init__(self, parent):
-
+        def update_option_menu_button(  event):
+            self.update_option_menu(0)
         self.parent = parent
         self.options = set()
         self.om_variable = StringVar(self.parent)
@@ -57,7 +58,7 @@ class optionmenu():
         self.om.grid(column=0, row=0)
         self.create_button = Button(self.parent, text='Utworz dokument', command=self.create)
         self.create_button.grid(column=1, row=0)
-        self.update_option_menu(0)
+        self.om.bind('<Button-1>',update_option_menu_button)
 
     def askForNewDoc(self, _window, e):
         docName = e.get()
@@ -68,6 +69,8 @@ class optionmenu():
         self.update_option_menu(0)
         _window.destroy()
         self.parent.deiconify()
+
+
 
     def update_option_menu(self, data=None):
         if data == 0:
