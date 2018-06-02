@@ -20,6 +20,30 @@ void add(DATABASE &, string, string);
 void printSheet(SHEET);
 SHEET bufferFile(string);
 vector<string> split(const string&, const string&);
+void updateFile(string fileName,SHEET sheet)
+{
+	fstream fileStream;
+	fileStream.open(DIR_PATH + fileName, ios::out | ios::trunc);
+	if (fileStream.good())
+	{
+		printf("Opening for update went OK \n");
+		for (auto i = sheet.begin(); i != sheet.end(); i++)
+		{
+			for (auto j = (*i).begin(); j != (*i).end(); j++)
+			{
+				fileStream << *j;
+			}
+			fileStream << endl;
+		}
+		fileStream.flush();			/*Forcing buffer to go to harddisc's emory*/
+		fileStream.close(); 			/*Close the file when finished*/
+		printf("Everything is OK \n");
+	}
+	else
+	{
+			printf("SOMETHING IS WRONG\n");
+	}
+}
 
 void test()
 {
