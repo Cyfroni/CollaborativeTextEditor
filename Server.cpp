@@ -70,7 +70,8 @@ void *listening(void*)
 			for (auto x : listeners)
 			{
 				cout<<x<<" ";
-				send(ChildrenSockets[x], info.c_str(), strlen(info.c_str()), 0); //najpierw klient musi dobrze obslugiwac wiadomosci
+				send(ChildrenSockets[x], info.c_str(), strlen(info.c_str()), 0);
+				add(dataBase, message.second, info);
 			}
 			cout<<endl;
 		}
@@ -309,10 +310,12 @@ void *connection_handler(void* socket_desc)
 		if (!strcmp(instr, "UG")) //close file
 		{
 			dataBase[fileOpen].second.erase(new_fd);
-
+			cout<<dataBase[fileOpen].second.size()<<endl;
 			if (dataBase[fileOpen].second.size() == 0)
 			{
-				//TODO: update file - last connection ended
+				DOCK &dock = dataBase[fileOpen];
+				SHEET &sheet = dock.first;
+				updateFile(fileOpen,sheet);
 				//TODO: remove dock from database - need to clear data
 			}
 			fileOpen = "";

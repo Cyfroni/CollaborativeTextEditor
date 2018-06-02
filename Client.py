@@ -100,7 +100,7 @@ class optionmenu():
         textWindow = Tk()
         sock.send("G" + fileName)
         self.parent.withdraw()
-        textWindow.protocol('WM_DELETE_WINDOW', lambda: (textWindow.destroy(), self.parent.deiconify()))
+        textWindow.protocol('WM_DELETE_WINDOW', lambda: (textWindow.destroy(), self.parent.deiconify(),sock.send("UG")))
 
         text1 = Text(textWindow, height=20, width=5)
         text1.insert(END, '\n')
@@ -191,7 +191,7 @@ class optionmenu():
         self.text2.bind('<Key>', check)
         self.text2.bind('<<Modified>>', changed)
 
-        self.mother=True #TODO: wymyslic lepszy semafor
+        self.mother=True 
         data = 'op'
         while not (len(data) == 0 or data[-1] == '\0'):
             data = sock.recv(100)

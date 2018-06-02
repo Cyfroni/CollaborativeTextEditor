@@ -20,6 +20,7 @@ void add(DATABASE &, string, string);
 void printSheet(SHEET);
 SHEET bufferFile(string);
 vector<string> split(const string&, const string&);
+
 void updateFile(string fileName,SHEET sheet)
 {
 	fstream fileStream;
@@ -48,8 +49,8 @@ void updateFile(string fileName,SHEET sheet)
 void test()
 {
 	string file = "kohan.txt";
-	LINE line1{ 'a','b','4' }, line2{ '2','q' };
-	SHEET sheet{ line1, line2 };
+	LINE line1{ 'a' }, line2{ '2','q' };
+	SHEET sheet{LINE{}};
 	LISTENERS lis({ 1,2 });
 
 	DOCK dock = make_pair(sheet, lis);
@@ -57,7 +58,8 @@ void test()
 	DATABASE dataBase;
 	dataBase.emplace(file, dock);
 	//przychodzi info od klienta
-	string info = "1.2.2.1:tg\nw";
+	//string info = "1.0.1.1:t";
+	string info1 = "1.0.1.1:t";
 	// ab4
 	// 2q
 
@@ -66,7 +68,9 @@ void test()
 	// 2q
 
 	printSheet(dataBase[file].first);
-	add(dataBase, file, info);
+	//add(dataBase, file, info);
+	printSheet(dataBase[file].first);
+	add(dataBase, file, info1);
 	printSheet(dataBase[file].first);
 }
 
@@ -91,6 +95,7 @@ void add(DATABASE &dataBase, string file, string info)
 	cout << "#" << change << "#\n";
 	int linesAmount = endIndex[0] - startIndex[0];
 
+
 	DOCK &dock = dataBase[file];
 	SHEET &sheet = dock.first;
 
@@ -112,6 +117,8 @@ void add(DATABASE &dataBase, string file, string info)
 	}
 	else
 	{
+		if(sheet.size()==0 && linesAmount==0)
+			linesAmount=1;
 		vector<LINE> newLines(linesAmount, LINE{});
 		sheet.insert(sheet.begin() + startIndex[0], newLines.begin(), newLines.end());
 
@@ -130,9 +137,13 @@ void add(DATABASE &dataBase, string file, string info)
 				line.insert(line.begin() + index, vec.begin(), vec.end());
 			}
 			else {
+				cout<<"1"<<endl;
 				LINE &line = sheet[startIndex[0] - 1 + q];
+				cout<<"2"<<endl;
 				vector<char> vec(str.begin(), str.end());
+				cout<<"3"<<endl;
 				line.insert(line.begin() + index, vec.begin(), vec.end());
+				cout<<"4"<<endl;
 			}
 			index = 0;
 			q++;
@@ -171,6 +182,9 @@ SHEET bufferFile(string fileName)
 		}
 		file.close();
 	}
+	cout<<"soz"<<sheet.size()<<endl;
+	if(sheet.size()==0)
+		sheet.push_back(LINE{});
 	printSheet(sheet);
 	return sheet;
 }
