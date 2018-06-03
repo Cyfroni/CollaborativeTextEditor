@@ -176,7 +176,6 @@ class Menu:
                         sock.send("Z" + input)
                     except Exception as e:
                         print(e)
-                    finally:
             self.text2.edit_modified(False)
 
         self.text2.focus_set()
