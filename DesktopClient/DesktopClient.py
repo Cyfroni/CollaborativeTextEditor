@@ -18,7 +18,7 @@ queue = deque()
 def sender(fun):
     def wrapper(message):
         fun(message)
-        time.sleep(0.1)
+        #time.sleep(0.1)
 
     return wrapper
 
@@ -165,7 +165,6 @@ class Menu:
                     try:
 
                         input = str(self.last) + "." + str(self.text2.index(INSERT)) + ":" + chr(self.key)
-                        print("xDDDD")
                     except:
                         print("unexpected char = ", self.key)
                         self.text2.edit_undo()
@@ -173,16 +172,11 @@ class Menu:
                 if len(input) > 0:
                     print(input)
                     try:
-                        print("ile jesszcze")
                         self.text2.edit_undo()
-                        print("send")
                         sock.send("Z" + input)
-                        print("succesful")
                     except Exception as e:
                         print(e)
-                        print("smiec")
                     finally:
-                        print("obarska")
             self.text2.edit_modified(False)
 
         self.text2.focus_set()
@@ -226,9 +220,10 @@ class Menu:
             print("matka na true")
             self.mother = True
             if data == "":
-                self.text2.remove(index1, index2)
+                print("index1",index1)
+                print("index2",index2)
+                self.text2.delete(index1, index2)
             else:
-                print("updatujemy")
                 self.text2.insert(index1, data)
             print("matka na false")
             self.mother = False
@@ -236,7 +231,7 @@ class Menu:
         except:
             pass
         finally:
-            window.after(1000, self.update_mot)
+            window.after(25, self.update_mot)
 
 
 class ClientThread(Thread):

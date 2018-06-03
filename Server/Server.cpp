@@ -162,9 +162,11 @@ void *listening(void*)
 			{
 				cout << x << " ";
 				send(ChildrenSockets[x], info.c_str(), strlen(info.c_str()), 0);
+				cout<<"tato"<<endl;
 				add(dataBase, message.second, info);
 			}
 			cout << endl;
+			cout<<"Alutam"<<endl;
 		}
 
 	}
@@ -259,30 +261,34 @@ void *connection_handler(void* socket_desc)
 		}
 		if (instr[0] == 'G')
 		{
+			if(fileOpen.size()>0)
+				perror("GG");
 			string info(instr + 1, strlen(instr) - 1);
-			ifstream file;
-			string line;
-			file.open((string)DIR_PATH + info);
-			if (file.is_open())
+			fileOpen = info;
+			if (dataBase.count(fileOpen) > 0)
+				dataBase[fileOpen].second.insert(sock);
+			else
 			{
-				printf("plik otwarty\n");
-				while (getline(file, line))
-				{
-					send(sock, (line + "\n").c_str(), strlen((line + "\n").c_str()), 0); //TODO: this should send data from dataBase, not file
-				}
-				send(sock, "\0", sizeof(char), 0);
-				file.close();
-				fileOpen = info;
-				if (dataBase.count(fileOpen) > 0)
-					dataBase[fileOpen].second.insert(sock);
-				else
-				{
-					LISTENERS lis({ sock });
-					SHEET sheet = bufferFile(fileOpen);
-					DOCK dock = make_pair(sheet, lis);
-					dataBase.emplace(fileOpen, dock);
-				}
+				LISTENERS lis({ sock });
+				SHEET sheet = bufferFile(fileOpen);
+				DOCK dock = make_pair(sheet, lis);
+				dataBase.emplace(fileOpen, dock);
 			}
+				string sheet;
+				for (auto i = dataBase[info].first.begin(); i != dataBase[info].first.end(); i++)
+				{
+					for (auto j = (*i).begin(); j != (*i).end(); j++)
+					{
+						sheet=sheet+*j;
+					}
+					cout<<sheet<<endl;
+					send(sock, (sheet+"\n").c_str(), strlen((sheet+"\n").c_str()), 0);
+					sheet="";
+				}
+
+			send(sock, "\0", sizeof(char), 0);
+
+
 		}
 		if (!strcmp(instr, "UG")) //close file
 		{
@@ -305,7 +311,18 @@ void *connection_handler(void* socket_desc)
 		}
 
 	}
-	//TODO: potrzebna obsługa jak ktos sie odlączy
+	if(fileOpen.size()>0)
+	{
+		dataBase[fileOpen].second.erase(sock);
+		if (dataBase[fileOpen].second.size() == 0)
+		{
+			DOCK &dock = dataBase[fileOpen];
+			SHEET &sheet = dock.first;
+			updateFile(fileOpen, sheet);
+			dataBase.erase(fileOpen);
+
+		}
+	}
+	ChildrenSockets.erase(sock);
 	close(sock);
-	cout << "hahahah" << endl;
 }
