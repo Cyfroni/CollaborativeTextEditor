@@ -163,8 +163,8 @@ void *listening(void*)
 				cout << x << " ";
 				send(ChildrenSockets[x], info.c_str(), strlen(info.c_str()), 0);
 				cout<<"tato"<<endl;
-				add(dataBase, message.second, info);
 			}
+			add(dataBase, message.second, info);
 			cout << endl;
 			cout<<"Alutam"<<endl;
 		}
@@ -253,11 +253,12 @@ void *connection_handler(void* socket_desc)
 		{
 			if (FileList.size() == 0)
 				send(sock, "\n", strlen("\n"), 0);
+			string temp="";
 			for (int j = 0; j < FileList.size(); j++)
 			{
-				send(sock, (FileList[j] + "\n").c_str(), strlen((FileList[j] + "\n").c_str()), 0);
-				cout << FileList[j] + "\n";
+				temp=temp+FileList[j]+"\n";
 			}
+			send(sock, temp.c_str(), strlen(temp.c_str()), 0);
 		}
 		if (instr[0] == 'G')
 		{

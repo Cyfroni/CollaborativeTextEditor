@@ -44,7 +44,7 @@ void test()
 
 	printSheet(dataBase[file].first);
 	add(dataBase, file, info1);
-	printSheet(dataBase[file].first);
+	
 }
 
 void updateFile(string fileName, SHEET sheet)
@@ -125,7 +125,7 @@ void add(DATABASE &dataBase, string file, string info)
 		int index = startIndex[1];
 		for (auto str : vecLines)
 		{
-			printSheet(sheet);
+
 			if (q == 0 && linesAmount > 0) {
 				LINE &line = sheet[startIndex[0] - 1];
 				LINE &lineEnd = sheet[endIndex[0] - 1];
@@ -143,6 +143,7 @@ void add(DATABASE &dataBase, string file, string info)
 			q++;
 		}
 	}
+	printSheet(sheet);
 }
 
 void printSheet(SHEET sheet)

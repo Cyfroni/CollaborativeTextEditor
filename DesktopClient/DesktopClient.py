@@ -17,6 +17,7 @@ queue = deque()
 
 def sender(fun):
     def wrapper(message):
+        #sock.makefile().flush()
         fun(message)
         #time.sleep(0.1)
 
@@ -30,7 +31,7 @@ def what(args):
     ret = []
     for arg in args:
         ret.append([(elem, getattr(arg, elem)) for elem in dir(arg)])
-    return ret
+    print(ret)
 
 
 def center_window(_window, width=300, height=200):
@@ -45,7 +46,11 @@ class Menu:
     def __init__(self, parent):
 
         def update_option_menu_button(event):
-            self.update_option_menu(0)
+            print("QUEBO")
+            if(self.open==False):
+
+                self.update_option_menu(0)
+            #self.open=not self.open
 
         self.mother = None
         self.parent = parent
@@ -57,6 +62,7 @@ class Menu:
         self.last = None
         self.lastDel = None
         self.text2 = None
+        self.open=False
         self.om = OptionMenu(self.parent, self.om_variable, "")
         self.om.grid(column=0, row=0)
         self.create_button = Button(self.parent, text='Utworz dokument', command=self.create)
@@ -70,7 +76,7 @@ class Menu:
             return
         print(doc_name)
         sock.send("N" + doc_name)
-        self.update_option_menu(0)
+        #self.update_option_menu([doc_name])
         _window.destroy()
         self.parent.deiconify()
 
@@ -230,7 +236,7 @@ class Menu:
         except:
             pass
         finally:
-            window.after(25, self.update_mot)
+            window.after(1, self.update_mot)
 
 
 class ClientThread(Thread):
