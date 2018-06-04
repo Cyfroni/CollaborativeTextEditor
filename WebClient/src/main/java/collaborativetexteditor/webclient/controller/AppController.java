@@ -10,15 +10,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class AppController {
 
 
-    @GetMapping(value = "/")
+    /*@GetMapping(value = "/")
     public ResponseEntity<String> test() {
         return ResponseEntity.status(200).build();
-    }
+    }*/
 
-
-    @GetMapping(value = "/hello")
+    @GetMapping("/FrontEnd")
     public String helloWorld() {
         return "hello World";
     }
+
+
 
 }
