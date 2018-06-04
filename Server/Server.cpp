@@ -185,6 +185,7 @@ void *connection_handler(void* socket_desc)
 	int sock = arg.sock;
 	string fileOpen = "";
 	sleep(1);
+
 	if (send(sock, &arg.PORT_num, sizeof(int), 0) == -1)
 		perror("send");
 	int amount;
