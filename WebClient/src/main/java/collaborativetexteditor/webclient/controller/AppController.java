@@ -3,6 +3,7 @@ package collaborativetexteditor.webclient.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.*;
@@ -20,20 +21,21 @@ public class AppController {
 
     Socket sock;
     PrintWriter out;
-    DataInputStream in;
     byte[] buffer=new byte[1024];
     int port;
     String mess;
     ServerSocket serverSocket;
     Socket clientSocket;
     StringBuffer sb = new StringBuffer();
+
+
     AppController(){
         super();
-        create();
+        init();
         System.out.println("siema");
     }
 
-    public void create() {
+    public void init() {
         try {
             sock = new Socket("127.0.0.1", 8080);
             out = new PrintWriter(sock.getOutputStream(), true);
@@ -46,22 +48,19 @@ public class AppController {
             DataInputStream infrom = new DataInputStream(clientSocket.getInputStream());
             Thread thread = new Thread("clientSocket"){
                 public void run(){
+                    byte[] buffer1=new byte[1024];
                     while(true) {
                         System.out.println("czeka");
                         try {
-                            char c;
-                            while(true) {
-                                c=infrom.readChar();
-                                sb.append(c);
-                            }
-
+                            infrom.read(buffer1);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        if (mess.equals(""))
+                        String s = new String(buffer1);
+                        if (s.equals(""))
                             break;
-                        System.out.println("#"+ mess);
-                        //queue.append(info)
+                        System.out.println("#"+ s);
+                        sb.append(s);
                     }
                 }
             };
@@ -80,10 +79,8 @@ public class AppController {
         return ResponseEntity.status(200).build();
     }*/
 
-    @GetMapping("/FrontEnd")
-    public String helloWorld() {
-        return "hello World";
-    }
+
+
 
 
 
