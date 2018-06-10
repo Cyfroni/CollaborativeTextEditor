@@ -20,7 +20,6 @@ public class MyController {
     Socket sock;
     PrintWriter out;
     BufferedReader in;
-    JTextArea textArea;
 
     int currentCursor;
     int currentIndex[]= new int[2];
@@ -32,6 +31,7 @@ public class MyController {
 
     boolean updateable = false;
 
+    int insertChange = 0;
 
     char[] buffer=new char[1024];
     char[] buf=new char[1024];
@@ -39,7 +39,7 @@ public class MyController {
     ServerSocket serverSocket;
     Socket clientSocket;
     StringBuffer sb = new StringBuffer();
-
+    JTextArea textArea = new JTextArea(50,50);
     Vector<String> docList=new Vector<>();
     JFrame Mainframe = new JFrame("FrameDemo");
     JComboBox<String> docBox = new JComboBox<>(docList);
@@ -48,6 +48,7 @@ public class MyController {
     JButton bOK = new JButton("OK");
     JTextField newdoc=new JTextField("");
     JFrame TextAreaframe = new JFrame();
+    String[] info = new String[]{"0","0",""};
 
     public void menu(){
         System.out.println("menu");
@@ -123,6 +124,7 @@ public class MyController {
             try {
                 splited[i] = textArea.getLineStartOffset(splited[i]-1) + splited[i+1];
             } catch (BadLocationException e) {
+                splited[i] = textArea.getDocument().getLength()+1;
                 e.printStackTrace();
             }
         }
@@ -131,7 +133,8 @@ public class MyController {
 
     public void textArea(String docName){
         Mainframe.setVisible(false);
-        //TextAreaframe.setVisible(true);
+        TextAreaframe.setVisible(true);
+
         TextAreaframe.setTitle(docName);
         TextAreaframe.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         TextAreaframe.addWindowListener(new WindowAdapter(){
@@ -141,12 +144,14 @@ public class MyController {
                 out.flush();
                 TextAreaframe.setVisible(false);
                 Mainframe.setVisible(true);
+                textArea.removeAll();
 
             }
         });
 
-        TextAreaframe.setVisible(true);
-        textArea = new JTextArea(50,50);
+
+        //TextAreaframe.setVisible(true);
+
 
         textArea.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -192,7 +197,12 @@ public class MyController {
             @Override
             public void undoableEditHappened(UndoableEditEvent e) {
                 if(updateable){
-
+                    if(info[2].equals(""))
+                    {
+                        textArea.setCaretPosition(Integer.parseInt(info[0]));
+                    } else {
+                        textArea.setCaretPosition(Integer.parseInt(info[1]));
+                    }
                     return;
                 }
                 System.out.println("Undoable");
@@ -202,6 +212,7 @@ public class MyController {
                 int offset = event.getOffset();
                 int lenght = event.getLength();
                 try {
+
                     changeText = event.getDocument().getText(offset,lenght);
 //                    System.out.println(Arrays.toString(event.getDocument().getRootElements());
 
@@ -218,14 +229,14 @@ public class MyController {
                 }
                 updateable = true;
                 e.getEdit().undo();
-                textArea.setCaretPosition(currentCursor);
+                //textArea.setCaretPosition(currentCursor);
                 updateable = false;
                 if(!removalFlag){
                     String msgInsert = ("Z"+(previousIndex[0]+1)+'.'+(previousCursor-previousIndex[1])+'.'+(currentIndex[0]+1)+'.'+(currentCursor-currentIndex[1])+':'+changeText);
                     out.print(msgInsert);
 //                    System.out.println(msgInsert);
                 } else{
-                    String msgDelete = ("Z"+(currentIndex[0]+1)+'.'+(currentCursor-currentIndex[1])+'.'+(previousIndex[0]+1)+'.'+(previousCursor-previousIndex[1])+':'+changeText);
+                    String msgDelete = ("Z"+(currentIndex[0]+1)+'.'+(currentCursor-currentIndex[1])+'.'+(previousIndex[0]+1)+'.'+(previousCursor-previousIndex[1])+':');
                     out.print(msgDelete);
 //                    System.out.println(msgDelete);
                 }
@@ -344,7 +355,7 @@ public class MyController {
                             StringBuilder sb = new StringBuilder(new String(thbuffer,0,byteNum));
                             String toUpdate = sb.toString();
                             System.out.println(toUpdate);
-                            String[] info = toPlaceAt(toUpdate);
+                            info = toPlaceAt(toUpdate);
                             updateable = true;
                             if (info[2].equals("")){
                                 textArea.replaceRange("",Integer.parseInt(info[0]),Integer.parseInt(info[1]));
