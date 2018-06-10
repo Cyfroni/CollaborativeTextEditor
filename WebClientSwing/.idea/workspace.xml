@@ -15,7 +15,7 @@
       <file leaf-file-name="WebClient.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/CollaborativeTextEditor/WebClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
+            <state relative-caret-position="150">
               <caret line="10" selection-start-line="10" selection-end-line="10" />
               <folding>
                 <element signature="e#123#124#0" expanded="true" />
@@ -25,13 +25,17 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MyController.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="MyController.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/CollaborativeTextEditor/MyController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="143" lean-forward="true" selection-start-line="143" selection-end-line="143" />
+            <state relative-caret-position="146">
+              <caret line="107" column="39" lean-forward="true" selection-start-line="107" selection-start-column="39" selection-end-line="107" selection-end-column="39" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#3615#3781#0" expanded="true" />
+                <element signature="e#3780#3781#0" expanded="true" />
+                <element signature="e#9600#9601#0" expanded="true" />
+                <element signature="e#9650#9651#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -40,7 +44,7 @@
       <file leaf-file-name="JTextArea.java" pinned="false" current-in-tab="false">
         <entry file="jar://$USER_HOME$/programFiles/jdk1.8.0_171/src.zip!/javax/swing/JTextArea.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="182">
+            <state relative-caret-position="1847">
               <caret line="408" selection-start-line="408" selection-end-line="408" />
             </state>
           </provider>
@@ -49,17 +53,17 @@
       <file leaf-file-name="DesktopClient.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../DesktopClient/DesktopClient.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="495">
-              <caret line="64" column="23" selection-start-line="64" selection-start-column="23" selection-end-line="64" selection-end-column="23" />
+            <state relative-caret-position="300">
+              <caret line="107" column="19" selection-start-line="107" selection-start-column="8" selection-end-line="107" selection-end-column="19" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MyController.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MyController.java" pinned="false" current-in-tab="false">
         <entry file="file://$USER_HOME$/Downloads/MyController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="21" column="38" selection-start-line="21" selection-start-column="38" selection-end-line="21" selection-end-column="38" />
+            <state relative-caret-position="45">
+              <caret line="86" column="24" lean-forward="true" selection-start-line="86" selection-start-column="24" selection-end-line="86" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -122,9 +126,9 @@
         <option value="$PROJECT_DIR$/src/CollaborativeTextEditor/WebClient.java" />
         <option value="$PROJECT_DIR$/src/CollaborativeTextEditor/test.java" />
         <option value="$PROJECT_DIR$/../Server/Server.cpp" />
-        <option value="$PROJECT_DIR$/src/CollaborativeTextEditor/MyController.java" />
         <option value="$PROJECT_DIR$/../DesktopClient/DesktopClient.py" />
         <option value="$USER_HOME$/Downloads/MyController.java" />
+        <option value="$PROJECT_DIR$/src/CollaborativeTextEditor/MyController.java" />
       </list>
     </option>
   </component>
@@ -138,8 +142,8 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="228" />
-    <option name="y" value="24" />
+    <option name="x" value="130" />
+    <option name="y" value="34" />
     <option name="width" value="1400" />
     <option name="height" value="959" />
   </component>
@@ -300,15 +304,15 @@
       <workItem from="1528503564354" duration="271000" />
       <workItem from="1528504100040" duration="334000" />
       <workItem from="1528509253892" duration="923000" />
-      <workItem from="1528562204772" duration="31712000" />
+      <workItem from="1528562204772" duration="37905000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="36338000" />
+    <option name="totallyTimeSpent" value="42531000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="228" y="24" width="1400" height="959" extended-state="0" />
+    <frame x="130" y="34" width="1400" height="959" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
@@ -366,6 +370,10 @@
           <caret line="40" column="39" selection-start-line="40" selection-start-column="39" selection-end-line="40" selection-end-column="39" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#3615#3781#0" expanded="true" />
+            <element signature="e#3780#3781#0" expanded="true" />
+            <element signature="e#9600#9601#0" expanded="true" />
+            <element signature="e#9650#9651#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -410,17 +418,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/CollaborativeTextEditor/WebClient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="10" selection-start-line="10" selection-end-line="10" />
-          <folding>
-            <element signature="e#123#124#0" expanded="true" />
-            <element signature="e#172#173#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/CollaborativeTextEditor/test.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
@@ -444,32 +441,47 @@
     </entry>
     <entry file="jar://$USER_HOME$/programFiles/jdk1.8.0_171/src.zip!/javax/swing/JTextArea.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
+        <state relative-caret-position="1847">
           <caret line="408" selection-start-line="408" selection-end-line="408" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/CollaborativeTextEditor/MyController.java">
+    <entry file="file://$PROJECT_DIR$/src/CollaborativeTextEditor/WebClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="143" lean-forward="true" selection-start-line="143" selection-end-line="143" />
+        <state relative-caret-position="150">
+          <caret line="10" selection-start-line="10" selection-end-line="10" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#123#124#0" expanded="true" />
+            <element signature="e#172#173#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../DesktopClient/DesktopClient.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="64" column="23" selection-start-line="64" selection-start-column="23" selection-end-line="64" selection-end-column="23" />
         </state>
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/Downloads/MyController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="21" column="38" selection-start-line="21" selection-start-column="38" selection-end-line="21" selection-end-column="38" />
+        <state relative-caret-position="45">
+          <caret line="86" column="24" lean-forward="true" selection-start-line="86" selection-start-column="24" selection-end-line="86" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../DesktopClient/DesktopClient.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="107" column="19" selection-start-line="107" selection-start-column="8" selection-end-line="107" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/CollaborativeTextEditor/MyController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="146">
+          <caret line="107" column="39" lean-forward="true" selection-start-line="107" selection-start-column="39" selection-end-line="107" selection-end-column="39" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3615#3781#0" expanded="true" />
+            <element signature="e#3780#3781#0" expanded="true" />
+            <element signature="e#9600#9601#0" expanded="true" />
+            <element signature="e#9650#9651#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

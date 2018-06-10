@@ -5,17 +5,13 @@ import javax.swing.event.*;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import javax.swing.undo.UndoableEdit;
+import javax.xml.soap.Text;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 import java.util.Vector;
-import java.util.stream.Collectors;
 
 
 import static java.lang.StrictMath.pow;
@@ -38,42 +34,84 @@ public class MyController {
 
 
     char[] buffer=new char[1024];
+    char[] buf=new char[1024];
     int port;
-    String mess;
     ServerSocket serverSocket;
     Socket clientSocket;
     StringBuffer sb = new StringBuffer();
-    JFrame frame;
-    JButton b1;
-    //JButton b;
-    //JButton b1;
+
+    Vector<String> docList=new Vector<>();
+    JFrame Mainframe = new JFrame("FrameDemo");
+    JComboBox<String> docBox = new JComboBox<>(docList);
+    JButton bNewDoc = new JButton("Nowy dokument");
+    JButton bBack = new JButton("<-");
+    JButton bOK = new JButton("OK");
+    JTextField newdoc=new JTextField("");
+    JFrame TextAreaframe = new JFrame();
 
     public void menu(){
-        String[] docList = { "" };
-        frame = new JFrame("FrameDemo");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
+        System.out.println("menu");
+        Mainframe.getContentPane().removeAll();
 
+        Mainframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Mainframe.setVisible(true);
+        Mainframe.add(docBox, BorderLayout.WEST);
+        Mainframe.add(bNewDoc, BorderLayout.CENTER);
 
-        JComboBox<String> docBox = new JComboBox<>(docList);
-        docBox.addItem("test");
-        //docBox.addActionListener(this);
-
-        b1 = new JButton("Nowy dokument");
-        b1.setVerticalTextPosition(AbstractButton.CENTER);
-        b1.setHorizontalTextPosition(AbstractButton.LEADING); //aka LEFT, for left-to-right locales
-        b1.setActionCommand("disable");
-        b1.addActionListener(e -> newDocument());
-        frame.getContentPane().add(docBox, BorderLayout.WEST);
-        frame.getContentPane().add(b1, BorderLayout.EAST);
-
-        frame.pack();
+        Mainframe.revalidate();
+        Mainframe.repaint();
+        Mainframe.pack();
     }
 
+    public void sendMessage(){
+
+        String name=newdoc.getText();
+        if (name.length() == 0)
+            return;
+
+        out.print("N" +name);
+        out.flush();
+
+        //menu();
+    }
     public void newDocument(){
+        System.out.println("newDocument");
+        Mainframe.getContentPane().removeAll();
 
-        System.out.println("Nowy dokument");
+        Mainframe.setVisible(true);
+
+        Mainframe.add(newdoc, BorderLayout.CENTER);
+        Mainframe.add(bBack, BorderLayout.WEST);
+        Mainframe.add(bOK, BorderLayout.EAST);
+        Mainframe.repaint();
+        Mainframe.pack();
+
     }
+
+
+    public void updateOptionMenu()  {
+        System.out.println("updateOptionMenu");
+        out.print("UP");
+        out.flush();
+
+        try {
+            int read = in.read(buf);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String inputdata = new String(buf);
+        String[] SplitData = inputdata.split("\n");
+
+
+        for (String option : SplitData) {
+            if (!docList.contains(option))
+                docList.add(option);
+
+
+        }
+    }
+
+
     public String[] toPlaceAt(String parse){
         String splitedText[] = parse.split(":", parse.indexOf(':'));
         String[] splitedIndexes = splitedText[0].split("\\.");
@@ -92,9 +130,22 @@ public class MyController {
     }
 
     public void textArea(String docName){
-        frame = new JFrame(docName);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
+        Mainframe.setVisible(false);
+        //TextAreaframe.setVisible(true);
+        TextAreaframe.setTitle(docName);
+        TextAreaframe.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        TextAreaframe.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosing(WindowEvent e) {
+                out.print("UG");
+                out.flush();
+                TextAreaframe.setVisible(false);
+                Mainframe.setVisible(true);
+
+            }
+        });
+
+        TextAreaframe.setVisible(true);
         textArea = new JTextArea(50,50);
 
         textArea.getDocument().addDocumentListener(new DocumentListener() {
@@ -212,19 +263,60 @@ public class MyController {
         System.out.println(currentIndex[1]);
         System.out.println(currentCursor);
         */
-        frame.getContentPane().add(textArea, BorderLayout.CENTER);
-        frame.pack();
+        TextAreaframe.getContentPane().add(textArea, BorderLayout.CENTER);
+        TextAreaframe.pack();
     }
 
 
     MyController(){
         super();
         init();
-        //menu();
-        textArea("test.txt");
+        menu();
         System.out.println("siema");
     }
     public void init() {
+        Mainframe.setSize(350, 64);
+        bNewDoc.setVerticalTextPosition(AbstractButton.CENTER);
+        bNewDoc.setHorizontalTextPosition(AbstractButton.LEADING); //aka LEFT, for left-to-right locales
+        //bNewDoc.setActionCommand("disable");
+        bNewDoc.addActionListener(d -> newDocument());
+
+        bBack.setVerticalTextPosition(AbstractButton.CENTER);
+        bBack.setHorizontalTextPosition(AbstractButton.LEADING); //aka LEFT, for left-to-right locales
+        //bBack.setActionCommand("disable");
+        bBack.addActionListener(e ->menu());
+
+        bOK.setVerticalTextPosition(AbstractButton.CENTER);
+        bOK.setHorizontalTextPosition(AbstractButton.LEADING); //aka LEFT, for left-to-right locales
+        // bOK.setActionCommand("disable");
+        bOK.addActionListener(f ->sendMessage());
+
+        //docBox.addActionListener(dB ->updateOptionMenu());
+        docBox.setSize(200,64);
+        docBox.addItemListener(e -> {
+
+            textArea(e.getItem().toString());
+        });
+        docBox.addPopupMenuListener(new PopupMenuListener() {
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                updateOptionMenu();
+            }
+
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+
+            }
+
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {
+
+            }
+        });
+
+
+
+
         try {
             sock = new Socket("127.0.0.1", 8181);
             out = new PrintWriter(sock.getOutputStream(), true);
