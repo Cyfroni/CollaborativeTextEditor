@@ -11,7 +11,87 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="WebClient.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/CollaborativeTextEditor/WebClient.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="120">
+              <caret line="10" selection-start-line="10" selection-end-line="10" />
+              <folding>
+                <element signature="e#123#124#0" expanded="true" />
+                <element signature="e#172#173#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MyController.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/CollaborativeTextEditor/MyController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="300">
+              <caret line="143" lean-forward="true" selection-start-line="143" selection-end-line="143" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="JTextArea.java" pinned="false" current-in-tab="false">
+        <entry file="jar://$USER_HOME$/programFiles/jdk1.8.0_171/src.zip!/javax/swing/JTextArea.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="182">
+              <caret line="408" selection-start-line="408" selection-end-line="408" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DesktopClient.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../DesktopClient/DesktopClient.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="495">
+              <caret line="64" column="23" selection-start-line="64" selection-start-column="23" selection-end-line="64" selection-end-column="23" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MyController.java" pinned="false" current-in-tab="true">
+        <entry file="file://$USER_HOME$/Downloads/MyController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="195">
+              <caret line="21" column="38" selection-start-line="21" selection-start-column="38" selection-end-line="21" selection-end-column="38" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Server.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../Server/Server.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret selection-end-column="56" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DataBase.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../Server/DataBase.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="546">
+              <caret line="163" column="31" selection-start-line="163" selection-start-column="31" selection-end-line="163" selection-end-column="31" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="test.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/CollaborativeTextEditor/test.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="195">
+              <caret line="26" column="29" selection-start-line="26" selection-start-column="29" selection-end-line="26" selection-end-column="29" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -20,13 +100,31 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>czekam</find>
+      <find>bufferFile</find>
+      <find>add</find>
+      <find>listening</find>
+      <find>package CollaborativeTextEditor\;\n\nimport javax\.swing\.\*\;\nimport javax\.swing\.event\.\*\;\nimport javax\.swing\.text\.BadLocationException\;\nimport java\.awt\.\*\;\nimport java\.awt\.event\.KeyEvent\;\nimport java\.awt\.event\.KeyListener\;\nimport java\.io\.\*\;\nimport java\.net\.ServerSocket\;\nimport java\.net\.Socket\;\n\nimport static java\.lang\.StrictMath\.pow\;\n\npublic class MyController \{\n    Socket sock\;\n    PrintWriter out\;\n    BufferedReader in\;\n\n    int currentCursor\;\n    int currentIndex\[\]\= new int\[2\]\;\n\n    int previousCursor\;\n    int previousIndex\[\]\= new int\[2\]\;\n\n    boolean removalFlag \= false\;\n\n    boolean updateable \= false\;\n\n\n    char\[\] buffer\=new char\[1024\]\;\n    int port\;\n    String mess\;\n    ServerSocket serverSocket\;\n    Socket clientSocket\;\n    StringBuffer sb \= new StringBuffer\(\)\;\n    JFrame frame\;\n    JButton b1\;\n    \/\/JButton b\;\n    \/\/JButton b1\;\n\n    public void menu\(\)\{\n        String\[\] docList \= \{ \&quot;\&quot; \}\;\n        frame \= new JFrame\(\&quot;FrameDemo\&quot;\)\;\n        frame\.setDefaultCloseOperation\(JFrame\.EXIT_ON_CLOSE\)\;\n        frame\.setVisible\(true\)\;\n\n\n        JComboBox\&lt;String\&gt; docBox \= new JComboBox\&lt;\&gt;\(docList\)\;\n        docBox\.addItem\(\&quot;test\&quot;\)\;\n        \/\/docBox\.addActionListener\(this\)\;\n\n        b1 \= new JButton\(\&quot;Nowy dokument\&quot;\)\;\n        b1\.setVerticalTextPosition\(AbstractButton\.CENTER\)\;\n        b1\.setHorizontalTextPosition\(AbstractButton\.LEADING\)\; \/\/aka LEFT\, for left\-to\-right locales\n        b1\.setActionCommand\(\&quot;disable\&quot;\)\;\n        b1\.addActionListener\(e \-\&gt; newDocument\(\)\)\;\n        frame\.getContentPane\(\)\.add\(docBox\, BorderLayout\.WEST\)\;\n        frame\.getContentPane\(\)\.add\(b1\, BorderLayout\.EAST\)\;\n\n        frame\.pack\(\)\;\n    \}\n\n    public void newDocument\(\)\{\n\n        System\.out\.println\(\&quot;Nowy dokument\&quot;\)\;\n    \}\n\n    public void textArea\(String docName\)\{\n        frame \= new JFrame\(docName\)\;\n        frame\.setDefaultCloseOperation\(JFrame\.EXIT_ON_CLOSE\)\;\n        frame\.setVisible\(true\)\;\n        JTextArea textArea \= new JTextArea\(50\,50\)\;\n\n        textArea\.getDocument\(\)\.addDocumentListener\(new DocumentListener\(\) \{\n            \@Override\n            public void insertUpdate\(DocumentEvent e\) \{\n                removalFlag \= false\;\n\n                previousCursor \= textArea\.getCaretPosition\(\)\;\n                try \{\n                    previousIndex\[0\] \= textArea\.getLineOfOffset\(previousCursor\)\;\n                    previousIndex\[1\] \= textArea\.getLineStartOffset\(previousIndex\[0\]\)\;\n                \} catch \(BadLocationException ex\) \{\n                    ex\.printStackTrace\(\)\;\n                \}\n                System\.out\.println\(\&quot;insertion\&quot;\+Integer\.toString\(previousIndex\[0\]\+1\)\+Integer\.toString\(previousCursor\-previousIndex\[1\]\)\)\;\n            \}\n\n            \@Override\n            public void removeUpdate\(DocumentEvent e\) \{\n\n                removalFlag \= true\;\n                System\.out\.println\(\&quot;removal\&quot;\)\;\n                previousCursor \= textArea\.getCaretPosition\(\)\;\n                try \{\n                    previousIndex\[0\] \= textArea\.getLineOfOffset\(previousCursor\)\;\n                    previousIndex\[1\] \= textArea\.getLineStartOffset\(previousIndex\[0\]\)\;\n                \} catch \(BadLocationException ex\) \{\n                    ex\.printStackTrace\(\)\;\n                \}\n            \}\n\n            \@Override\n            public void changedUpdate\(DocumentEvent e\) \{\n\n            \}\n        \}\)\;\n        textArea\.getDocument\(\)\.addUndoableEditListener\(new UndoableEditListener\(\) \{\n            \@Override\n            public void undoableEditHappened\(UndoableEditEvent e\) \{\n                if\(updateable\)\{\n                    return\;\n                \}\n\n                currentCursor \= textArea\.getCaretPosition\(\)\;\n                try \{\n                    currentIndex\[0\] \= textArea\.getLineOfOffset\(currentCursor\)\;\n                    currentIndex\[1\] \= textArea\.getLineStartOffset\(currentIndex\[0\]\)\;\n                \} catch \(BadLocationException ex\) \{\n                    ex\.printStackTrace\(\)\;\n                \}\n                String msg \= \(\&quot;Z\&quot;\+\(previousIndex\[0\]\+1\)\+\'\.\'\+\(previousCursor\-previousIndex\[1\]\)\+\'\.\'\+\(currentIndex\[0\]\+1\)\+\'\.\'\+\(currentCursor\-currentIndex\[1\]\)\+\'\:\'\)\;\n                if\(\!removalFlag\)\{\n                    out\.print\(msg\)\;\n                \} else\{\n                    out\.print\(\'Z\'\+\(currentIndex\[0\]\+1\)\+\'\.\'\+\(currentCursor\-currentIndex\[1\]\)\+\'\.\'\+\(previousIndex\[0\]\+1\)\+\'\.\'\+\(previousCursor\-previousIndex\[1\]\)\+\'\:\'\)\;\n                \}\n                out\.flush\(\)\;\n\n\n\n                System\.out\.println\(msg\)\;\n                System\.out\.println\(\&quot;Undoable\&quot;\)\;\n                e\.getEdit\(\)\.undo\(\)\;\n                System\.out\.println\(e\.getEdit\(\)\.toString\(\)\)\;\n                System\.out\.println\(currentIndex\[0\]\+1\)\;\n                System\.out\.println\(currentCursor \- currentIndex\[1\]\)\;\n\n\n            \}\n        \}\)\;\n\n        out\.print\(\'G\'\+docName\)\;\n        out\.flush\(\)\;\n\n        try \{\n            int byteNum \= in\.read\(buffer\)\;\n            StringBuilder sb \= new StringBuilder\(new String\(buffer\,0\,byteNum\)\)\;\n            System\.out\.println\(sb\.length\(\)\)\;\n            sb\.deleteCharAt\(byteNum\-1\)\; \/\* adjusting message by deleting additional chars \*\/\n            sb\.deleteCharAt\(byteNum\-2\)\;\n            System\.out\.println\(sb\.length\(\)\)\;\n            String docText \= sb\.toString\(\)\;\n            System\.out\.println\(docText\)\;\n            updateable \= true\;\n            textArea\.append\(docText\)\;\n            updateable \= false\;\n        \} catch \(IOException e\) \{\n            e\.printStackTrace\(\)\;\n        \}\n        \/\*\n        System\.out\.println\(currentIndex\[0\]\)\;\n        System\.out\.println\(currentIndex\[1\]\)\;\n        System\.out\.println\(currentCursor\)\;\n        \*\/\n        frame\.getContentPane\(\)\.add\(textArea\, BorderLayout\.CENTER\)\;\n        frame\.pack\(\)\;\n    \}\n\n\n    MyController\(\)\{\n        super\(\)\;\n        init\(\)\;\n        \/\/menu\(\)\;\n        textArea\(\&quot;test\.txt\&quot;\)\;\n        System\.out\.println\(\&quot;siema\&quot;\)\;\n    \}\n    public void init\(\) \{\n        try \{\n            sock \= new Socket\(\&quot;127\.0\.0\.1\&quot;\, 8181\)\;\n            out \= new PrintWriter\(sock\.getOutputStream\(\)\, true\)\;\n            in \= new BufferedReader\(new InputStreamReader\(sock\.getInputStream\(\)\)\)\;\n            System\.out\.println\(in\.read\(buffer\)\)\;\n\n            port\= \(int\)\(buffer\[0\] \+ \(buffer\[1\] \* pow\(2\, 8\)\)\)\;\n            System\.out\.println\(port\)\;\n            serverSocket \= new ServerSocket\(port\)\;\n            clientSocket \= serverSocket\.accept\(\)\;\n            DataInputStream infrom \= new DataInputStream\(clientSocket\.getInputStream\(\)\)\;\n            Thread thread \= new Thread\(\&quot;clientSocket\&quot;\)\{\n                public void run\(\)\{\n                    byte\[\] buffer1\=new byte\[1024\]\;\n                    while\(true\) \{\n                        System\.out\.println\(\&quot;czeka\&quot;\)\;\n                        try \{\n                            infrom\.read\(buffer1\)\;\n                        \} catch \(IOException e\) \{\n                            e\.printStackTrace\(\)\;\n                        \}\n                        String s \= new String\(buffer1\)\;\n                        if \(s\.equals\(\&quot;\&quot;\)\)\n                            break\;\n                        System\.out\.println\(\&quot;\#\&quot;\+ s\)\;\n                        sb\.append\(s\)\;\n                    \}\n                \}\n            \}\;\n            thread\.start\(\)\;\n        \} catch \(IOException e1\) \{\n            e1\.printStackTrace\(\)\;\n        \}\n    \}\n\n\}\n</find>
+      <find>addition</find>
+      <find>undo</find>
+      <find>insert</find>
+      <find>MAX_LENGTH</find>
+      <find>\binsert</find>
+    </findStrings>
+  </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/src/Main.java" />
         <option value="$PROJECT_DIR$/src/CollaborativeTextEditor/main.java" />
         <option value="$PROJECT_DIR$/src/CollaborativeTextEditor/WebClient.java" />
+        <option value="$PROJECT_DIR$/src/CollaborativeTextEditor/test.java" />
+        <option value="$PROJECT_DIR$/../Server/Server.cpp" />
         <option value="$PROJECT_DIR$/src/CollaborativeTextEditor/MyController.java" />
+        <option value="$PROJECT_DIR$/../DesktopClient/DesktopClient.py" />
+        <option value="$USER_HOME$/Downloads/MyController.java" />
       </list>
     </option>
   </component>
@@ -39,17 +137,18 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="172" />
-    <option name="y" value="43" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="228" />
+    <option name="y" value="24" />
     <option name="width" value="1400" />
-    <option name="height" value="986" />
+    <option name="height" value="959" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
@@ -57,6 +156,32 @@
             <path>
               <item name="WebClientSwing" type="b2602c69:ProjectViewProjectNode" />
               <item name="WebClientSwing" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="WebClientSwing" type="b2602c69:ProjectViewProjectNode" />
+              <item name="WebClientSwing" type="462c0819:PsiDirectoryNode" />
+              <item name="out" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="WebClientSwing" type="b2602c69:ProjectViewProjectNode" />
+              <item name="WebClientSwing" type="462c0819:PsiDirectoryNode" />
+              <item name="out" type="462c0819:PsiDirectoryNode" />
+              <item name="production" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="WebClientSwing" type="b2602c69:ProjectViewProjectNode" />
+              <item name="WebClientSwing" type="462c0819:PsiDirectoryNode" />
+              <item name="out" type="462c0819:PsiDirectoryNode" />
+              <item name="production" type="462c0819:PsiDirectoryNode" />
+              <item name="WebClientSwing" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="WebClientSwing" type="b2602c69:ProjectViewProjectNode" />
+              <item name="WebClientSwing" type="462c0819:PsiDirectoryNode" />
+              <item name="out" type="462c0819:PsiDirectoryNode" />
+              <item name="production" type="462c0819:PsiDirectoryNode" />
+              <item name="WebClientSwing" type="462c0819:PsiDirectoryNode" />
+              <item name="CollaborativeTextEditor" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="WebClientSwing" type="b2602c69:ProjectViewProjectNode" />
@@ -78,14 +203,17 @@
         </subPane>
       </pane>
       <pane id="AndroidView" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="project.structure.last.edited" value="SDKs" />
+    <property name="project.structure.proportion" value="0.097751714" />
+    <property name="project.structure.side.proportion" value="0.2" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -169,42 +297,47 @@
       <option name="presentableId" value="Default" />
       <updated>1528492643485</updated>
       <workItem from="1528492653814" duration="3098000" />
+      <workItem from="1528503564354" duration="271000" />
+      <workItem from="1528504100040" duration="334000" />
+      <workItem from="1528509253892" duration="923000" />
+      <workItem from="1528562204772" duration="31712000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3098000" />
+    <option name="totallyTimeSpent" value="36338000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="64" y="-11" width="1857" height="995" extended-state="6" />
+    <frame x="228" y="24" width="1400" height="959" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info anchor="right" id="Palette" />
+      <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Messages" />
-      <window_info anchor="right" id="Palette&#9;" />
-      <window_info id="Image Layers" />
-      <window_info anchor="right" id="Capture Analysis" />
-      <window_info anchor="bottom" id="Event Log" side_tool="true" />
-      <window_info anchor="right" id="Maven Projects" />
-      <window_info anchor="bottom" id="Database Changes" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.3291714" />
-      <window_info anchor="bottom" id="Version Control" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Terminal" />
-      <window_info id="Capture Tool" />
-      <window_info id="Designer" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24959569" />
-      <window_info anchor="right" id="Database" />
-      <window_info anchor="right" id="SciView" />
+      <window_info anchor="bottom" id="Messages" order="7" weight="0.32942554" />
+      <window_info anchor="right" id="Palette&#9;" order="3" />
+      <window_info id="Image Layers" order="2" />
+      <window_info anchor="right" id="Capture Analysis" order="3" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
+      <window_info anchor="right" id="Maven Projects" order="3" />
+      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3282532" />
+      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info id="Capture Tool" order="2" />
+      <window_info id="Designer" order="2" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.043571427" />
+      <window_info anchor="right" id="Database" order="3" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="right" id="SciView" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info id="UI Designer" />
-      <window_info anchor="right" id="Theme Preview" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info id="Favorites" side_tool="true" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info id="UI Designer" order="2" />
+      <window_info anchor="right" id="Theme Preview" order="3" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39976552" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
     </layout>
@@ -216,38 +349,58 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/Main.java">
+    <entry file="file://$PROJECT_DIR$/src/CollaborativeTextEditor/WebClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" selection-start-line="1" selection-end-line="1" />
+        <state relative-caret-position="150">
+          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+          <folding>
+            <element signature="e#123#124#0" expanded="true" />
+            <element signature="e#172#173#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../WebClient/src/main/java/collaborativetexteditor/webclient/controller/WebController.java">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/CollaborativeTextEditor/MyController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" column="16" lean-forward="true" selection-start-line="13" selection-start-column="16" selection-end-line="13" selection-end-column="16" />
+        <state relative-caret-position="600">
+          <caret line="40" column="39" selection-start-line="40" selection-start-column="39" selection-end-line="40" selection-end-column="39" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/CollaborativeTextEditor/test.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="26" column="29" lean-forward="true" selection-start-line="26" selection-start-column="29" selection-end-line="26" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/CollaborativeTextEditor/WebClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="53" selection-start-line="4" selection-start-column="53" selection-end-line="4" selection-end-column="53" />
+        <state relative-caret-position="75">
+          <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
           <folding>
-            <element signature="e#101#102#0" expanded="true" />
-            <element signature="e#149#150#0" expanded="true" />
+            <element signature="e#123#124#0" expanded="true" />
+            <element signature="e#172#173#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../DesktopClient/DesktopClient.py">
+    <entry file="file://$PROJECT_DIR$/src/CollaborativeTextEditor/WebClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" selection-end-line="7" />
+          <folding>
+            <element signature="e#123#124#0" expanded="true" />
+            <element signature="e#172#173#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Main.java" />
+    <entry file="file://$PROJECT_DIR$/../WebClient/src/main/java/collaborativetexteditor/webclient/controller/WebController.java">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/../WebClient/src/main/java/collaborativetexteditor/webclient/controller/AppController.java">
@@ -257,5 +410,143 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/CollaborativeTextEditor/WebClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="10" selection-start-line="10" selection-end-line="10" />
+          <folding>
+            <element signature="e#123#124#0" expanded="true" />
+            <element signature="e#172#173#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/CollaborativeTextEditor/test.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="26" column="29" selection-start-line="26" selection-start-column="29" selection-end-line="26" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Server/DataBase.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="546">
+          <caret line="163" column="31" selection-start-line="163" selection-start-column="31" selection-end-line="163" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Server/Server.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/programFiles/jdk1.8.0_171/src.zip!/javax/swing/JTextArea.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="182">
+          <caret line="408" selection-start-line="408" selection-end-line="408" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/CollaborativeTextEditor/MyController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="143" lean-forward="true" selection-start-line="143" selection-end-line="143" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../DesktopClient/DesktopClient.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="64" column="23" selection-start-line="64" selection-start-column="23" selection-end-line="64" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Downloads/MyController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="21" column="38" selection-start-line="21" selection-start-column="38" selection-end-line="21" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>No facets are configured</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>1.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>WebClientSwing</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.6" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
   </component>
 </project>

@@ -11,10 +11,10 @@
 #include "DataBase.cpp"
 #include <netdb.h>
 
-#define MYPORT 8080    // port, z którym będą się łączyli użytkownicy
+#define MYPORT 8181    // port, z którym będą się łączyli użytkownicy
 #define MYPORT1 8090
 #define BACKLOG 10     // jak dużo możę być oczekujących połączeń w kolejce
-#define MAX_LENGTH 20
+#define MAX_LENGTH 4096
 
 struct stat info;
 deque<string> FileList;

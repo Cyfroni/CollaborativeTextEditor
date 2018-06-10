@@ -7,7 +7,7 @@ import time
 from threading import Thread
 
 HOST = '127.0.0.1'
-PORT = 8080
+PORT = 8181
 MAX_LENGTH = 10
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
