@@ -1,8 +1,10 @@
-echo REMEMBER TO COMPILE FROM IDE FIRST
+cd WebClient/out/production/WebClient
 
-jar cvf WebClient/webswing-2.5.4/CollaborativeTextEditor.jar WebClient/out/production/WebClient/CollaborativeTextEditor/*
+jar cvf CollaborativeTextEditor.jar .
 
-cd WebClient/webswing-2.5.4
+mv CollaborativeTextEditor.jar ../../../webswing-2.5.4
+
+cd ../../../webswing-2.5.4
 
 python -mwebbrowser http://localhost:8080/cte/
 
