@@ -8,7 +8,7 @@
 
 using namespace std;
 
-#define DIR_PATH "./Files/"
+#define DIR_PATH "./Server/Files/"
 
 typedef vector<char> LINE;
 typedef unordered_set<int> LISTENERS;
