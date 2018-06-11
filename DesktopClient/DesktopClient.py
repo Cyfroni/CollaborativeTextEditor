@@ -8,10 +8,6 @@ from threading import Thread
 
 HOST = '127.0.0.1'
 PORT = 8181
-<<<<<<< HEAD
-MAX_LENGTH = 10
-=======
->>>>>>> new
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 window = Tk()
@@ -49,17 +45,9 @@ class Menu:
     def __init__(self, parent):
 
         def update_option_menu_button(event):
-<<<<<<< HEAD
-            print("QUEBO")
-            if(self.open==False):
-
-                self.update_option_menu(0)
-            #self.open=not self.open
-=======
             if(self.open==False):
                 self.update_option_menu(0)
 
->>>>>>> new
 
         self.mother = None
         self.parent = parent
@@ -72,16 +60,10 @@ class Menu:
         self.lastDel = None
         self.text2 = None
         self.open=False
-<<<<<<< HEAD
-        self.om = OptionMenu(self.parent, self.om_variable, "")
-        self.om.grid(column=0, row=0)
-        self.create_button = Button(self.parent, text='Utworz dokument', command=self.create)
-=======
         self.om = OptionMenu(self.parent, self.om_variable,"")
         self.om.grid(column=0, row=0)
         self.om.config(width=10)
         self.create_button = Button(self.parent,width=15,bg="blue",text='Utworz dokument', command=self.create)
->>>>>>> new
         self.create_button.grid(column=1, row=0)
         self.om.bind('<Button-1>', update_option_menu_button)
         self.update_mot()
@@ -92,10 +74,6 @@ class Menu:
             return
         print(doc_name)
         sock.send("N" + doc_name)
-<<<<<<< HEAD
-        #self.update_option_menu([doc_name])
-=======
->>>>>>> new
         _window.destroy()
         self.parent.deiconify()
 
@@ -112,10 +90,7 @@ class Menu:
         elif len(self.options) > 1 and "" in self.options:
             self.options.remove("")
         menu = self.om["menu"]
-<<<<<<< HEAD
-=======
 
->>>>>>> new
         menu.delete(0, "end")
         for string in self.options:
             menu.add_command(label=string,
@@ -131,16 +106,8 @@ class Menu:
         text_window.protocol('WM_DELETE_WINDOW',
                              lambda: (text_window.destroy(), self.parent.deiconify(), sock.send("UG")))
 
-<<<<<<< HEAD
-        text1 = Text(text_window, height=20, width=5)
-        text1.insert(END, '\n')
-        text1.pack(side=LEFT, fill=Y)
-
-        self.text2 = Text(text_window, height=20, width=50, undo=True)
-=======
 
         self.text2 = Text(text_window, height=150, width=120, undo=True)
->>>>>>> new
         scroll = Scrollbar(text_window, command=self.text2.yview)
         self.text2.configure(yscrollcommand=scroll.set)
 
@@ -225,9 +192,6 @@ class Menu:
         self.text2.delete('end-2c')
         self.mother = False
 
-<<<<<<< HEAD
-        center_window(text_window, 300, 100)
-=======
         center_window(text_window,858, 300)
 
     def validate(self, action, index, value_if_allowed,
@@ -237,21 +201,16 @@ class Menu:
             return True
         else:
             return False
->>>>>>> new
 
     def create(self):
         print("create")
         file_name_window = Tk()
         self.parent.withdraw()
         file_name_window.protocol('WM_DELETE_WINDOW', lambda: None)
-<<<<<<< HEAD
-        entry = Entry(file_name_window)
-=======
         vcmd = (file_name_window.register(self.validate),
                 '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
         entry = Entry(file_name_window,validate = 'key', validatecommand = vcmd)
 
->>>>>>> new
         ok = Button(file_name_window, text="OK", width=10, command=lambda: self.ask_for_new_doc(file_name_window, entry))
         back = Button(file_name_window, text="<-", width=10,
                       command=lambda: (file_name_window.destroy(), self.parent.deiconify()))
@@ -259,11 +218,7 @@ class Menu:
         entry.focus_set()
         back.grid(column=0, row=1)
         ok.grid(column=1, row=1)
-<<<<<<< HEAD
-        center_window(file_name_window, 300, 100)
-=======
         center_window(file_name_window, 215, 48)
->>>>>>> new
 
     def update_mot(self):
         try:
@@ -317,11 +272,7 @@ try:
     server_socket.listen(1)
     (client_socket, address) = server_socket.accept()
     o_menu = Menu(window)
-<<<<<<< HEAD
-    center_window(window, 300, 100)
-=======
     center_window(window, 273, 60)
->>>>>>> new
     ct = ClientThread(client_socket, o_menu)
     ct.start()
     window.mainloop()
