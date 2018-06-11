@@ -1,10 +1,10 @@
-jar cvf CollaborativeTextEditor.jar WebClient/out/production/WebClient/CollaborativeTextEditor/*
+echo REMEMBER TO COMPILE FROM IDE FIRST
 
-mv CollaborativeTextEditor.jar webswing-2.5.4
+jar cvf WebClient/webswing-2.5.4/CollaborativeTextEditor.jar WebClient/out/production/WebClient/CollaborativeTextEditor/*
 
-cd webswing-2.5.4
+cd WebClient/webswing-2.5.4
 
-python -mwebbrowser http://localhost:8080
+python -mwebbrowser http://localhost:8080/cte/
 
 sh run.sh
 
