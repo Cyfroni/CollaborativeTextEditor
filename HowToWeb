@@ -1,0 +1,2 @@
+jar cvf CollaborativeTextEditor.jar WebClient/out/production/WebClient/CollaborativeTextEditor/*
+

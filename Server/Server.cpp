@@ -85,6 +85,15 @@ int main(int c, char** v)
 		exit(1);
 	}
 
+<<<<<<< HEAD
+=======
+    if (stat(DIR_PATH, &info) != 0)
+        system((string("mkdir -p ") + DIR_PATH).c_str());
+    else if (info.st_mode & S_IFDIR) {}
+    else
+        perror((string("") + DIR_PATH + " is no directory\n").c_str());
+
+>>>>>>> new
 	pthread_create(&thread_id, NULL, listening, 0);
 	readDocumentNames(DIR_PATH, FileList);
 	int port_generator = 9000;
@@ -191,12 +200,15 @@ void *connection_handler(void* socket_desc)
 	int amount;
 	char instr[MAX_LENGTH];
 
+<<<<<<< HEAD
 	if (stat(DIR_PATH, &info) != 0)
 		system((string("mkdir -p ") + DIR_PATH).c_str());
 	else if (info.st_mode & S_IFDIR) {}
 	else
 		perror((string("") + DIR_PATH + " is no directory\n").c_str());
 
+=======
+>>>>>>> new
 	while (1)
 	{
 		perror("czekam\n");

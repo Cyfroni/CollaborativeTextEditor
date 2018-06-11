@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /target/
 !.mvn/wrapper/maven-wrapper.jar
 
@@ -23,3 +24,6 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+=======
+*.class
+>>>>>>> new
