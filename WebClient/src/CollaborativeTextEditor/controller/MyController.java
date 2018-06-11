@@ -46,7 +46,6 @@ public class MyController {
     }
 
     public String myReceiveMessage(BufferedReader reader, char[] b, int cut) {
-//        char[] b = new char[1024];
         int amount = 0;
         try {
             amount = reader.read(b);

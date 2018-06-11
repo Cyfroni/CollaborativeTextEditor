@@ -6,7 +6,9 @@ mv CollaborativeTextEditor.jar ../../../webswing-2.5.4
 
 cd ../../../webswing-2.5.4
 
-python -mwebbrowser http://localhost:8080/cte/
+cp CollaborativeTextEditor.jar CollaborativeTextEditor2.jar
+
+python -mwebbrowser http://localhost:8080/
 
 sh run.sh
 
