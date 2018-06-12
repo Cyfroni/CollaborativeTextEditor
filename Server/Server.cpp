@@ -22,6 +22,9 @@ unordered_map<int, int> ChildrenSockets;
 pthread_t thread_id;
 DATABASE dataBase;
 deque<pair<string, string> > messageQueue;
+unordered_set<pthread_t> threads;
+int root_socket; // nasłuchuj na root_socket, nowe połaczenia na sock
+int end_proc = 0;
 
 struct arg_struct {
 	int sock;
@@ -30,8 +33,18 @@ struct arg_struct {
 
 void *connection_handler(void *);
 void readDocumentNames(const string&, deque<string>&);
-void sigchld_handler(int);
 void *listening(void*);
+
+void termination_handler (int signum)
+{
+	cout<< "Signal " << signum << " caught..." << endl;
+	end_proc = 1;
+	close(root_socket);
+	for (auto kv : ChildrenSockets){
+		close(kv.first);
+		close(kv.second);
+	}
+}
 
 int main(int c, char** v)
 {
@@ -40,10 +53,9 @@ int main(int c, char** v)
 		test();
 		return 0;
 	}
-	int root_socket; // nasłuchuj na root_socket, nowe połaczenia na sock
 	struct sockaddr_in my_addr; // informacja o moim adresie
 	struct sockaddr_in their_addr; // informacja o adresie osoby łączącej się
-	unsigned int sin_size;
+	unsigned int sin_size = sizeof(struct sockaddr_in);
 	struct sigaction sa;
 	int yes = 1;
 
@@ -76,14 +88,9 @@ int main(int c, char** v)
 		exit(1);
 	}
 
-	sa.sa_handler = sigchld_handler; // zbierz martwe procesy
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = SA_RESTART;
-	if (sigaction(SIGCHLD, &sa, NULL) == -1)
-	{
-		perror("sigaction");
-		exit(1);
-	}
+	//signal(SIGABRT, &termination_handler);
+	//signal(SIGTERM, &termination_handler);
+	signal(SIGINT, &termination_handler);
 
     if (stat(DIR_PATH, &info) != 0)
         system((string("mkdir -p ") + DIR_PATH).c_str());
@@ -92,23 +99,28 @@ int main(int c, char** v)
         perror((string("") + DIR_PATH + " is no directory\n").c_str());
 
 	pthread_create(&thread_id, NULL, listening, 0);
+	threads.insert(thread_id);
 	readDocumentNames(DIR_PATH, FileList);
 	int port_generator = 9000;
 	cout<<"Server is up\n";
 	while (1)
 	{ // głowna pętla accept()
-		sin_size = sizeof(struct sockaddr_in);
 		struct arg_struct args;
 		if ((args.sock = accept(root_socket, (struct sockaddr *)&their_addr, &sin_size)) == -1)
 		{
 			perror("accept");
-			continue;
+			if(end_proc)
+				break;
+			else{
+				continue;
+			}
 		}
 		args.PORT_num = port_generator++;
 		printf("server: got connection from %s\n", inet_ntoa(their_addr.sin_addr));
 		pthread_create(&thread_id, NULL, connection_handler, &args);
 		pthread_detach(thread_id);
-
+		threads.insert(thread_id);
+	
 		int mother_socket; // nasłuchuj na sock_fd, nowe połaczenia na sock
 
 		int yes = 1;
@@ -131,12 +143,24 @@ int main(int c, char** v)
 		addrRemote.sin_family = AF_INET;
 		addrRemote.sin_addr.s_addr = htonl(INADDR_ANY);
 
+		int timeout = 10;
 		while (connect(mother_socket, (sockaddr*)&addrRemote, sizeof(addrRemote)) == -1)
 		{
 			sleep(1);
+			if (timeout-- == 0){
+				close(mother_socket);
+				break;
+			}
+		}
+		if (timeout < 0){
+			continue;
 		}
 		ChildrenSockets.emplace(args.sock, mother_socket);
 	}
+	for(auto thread : threads){
+		pthread_join(thread, NULL);
+	}
+	cout<<"All threads ended\nServer is down\n";
 	return 0;
 }
 
@@ -155,8 +179,7 @@ void readDocumentNames(const string& dirName, deque<string>& list)
 void *listening(void*)
 {
 	pair<string, string> message;
-
-	while (1)
+	while (!end_proc)
 	{
 		if (!messageQueue.empty())
 		{
@@ -174,12 +197,7 @@ void *listening(void*)
 		}
 
 	}
-
-}
-
-void sigchld_handler(int s)
-{
-	while (wait(NULL) > 0);
+	cout<<"Listening thread end\n";
 }
 
 void *connection_handler(void* socket_desc)
@@ -325,4 +343,5 @@ void *connection_handler(void* socket_desc)
 	}
 	ChildrenSockets.erase(sock);
 	close(sock);
+	cout<<"child process end\n";
 }
