@@ -8,7 +8,7 @@ from threading import Thread
 
 HOST = '127.0.0.1'
 PORT = 8181
-
+msgLen=4096
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 window = Tk()
 queue = deque()
@@ -80,7 +80,7 @@ class Menu:
     def update_option_menu(self, data=None):
         if data == 0:
             sock.send("UP")
-            data = sock.recv(100).split("\n")
+            data = sock.recv(msgLen).split("\n")
             print(data)
         for option in data:
             if option not in self.options:
@@ -186,7 +186,7 @@ class Menu:
         self.mother = True
         data = 'op'
         while not (len(data) == 0 or data[-1] == '\0'):
-            data = sock.recv(100)
+            data = sock.recv(msgLen)
             self.text2.insert(END, data)
             print(data)
         self.text2.delete('end-2c')
@@ -223,7 +223,7 @@ class Menu:
     def update_mot(self):
         try:
             info = queue.popleft()
-            index, data = info.split(":")
+            index, data = info.split(":",1)
             index = index.split(".")
             index1 = index[0] + "." + index[1]
             index2 = index[2] + "." + index[3]
@@ -247,15 +247,14 @@ class Menu:
 
 class ClientThread(Thread):
 
-    def __init__(self, socket, o_menu):
-        self.o_menu = o_menu
+    def __init__(self, socket):
         self.socket = socket
         Thread.__init__(self)
 
     def run(self):
         while True:
             print("czeka")
-            info = self.socket.recv(100)
+            info = self.socket.recv(msgLen)
             if info == '':
                 break
             print("#", info)
@@ -266,14 +265,14 @@ try:
 
     sock.connect((HOST, PORT))
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    port = sock.recv(100)
+    port = sock.recv(msgLen)
     port = ord(port[1]) * 16 * 16 + ord(port[0])
     server_socket.bind((HOST, port))
     server_socket.listen(1)
     (client_socket, address) = server_socket.accept()
     o_menu = Menu(window)
     center_window(window, 273, 60)
-    ct = ClientThread(client_socket, o_menu)
+    ct = ClientThread(client_socket)
     ct.start()
     window.mainloop()
 except Exception as e:
