@@ -25,10 +25,16 @@ public class TextAreaUndoableEditListener implements UndoableEditListener {
     public void undoableEditHappened(UndoableEditEvent e) {
 
         if (controller.updateable) {
-            if (controller.info[2].equals("")) {
-                model.setCaretPosition(Integer.parseInt(controller.info[0]));
-            } else {
-                model.setCaretPosition(Integer.parseInt(controller.info[1]));
+            if(model.getCaretPosition()==Integer.parseInt(controller.info[1])) {
+                if (controller.info[2].equals("")) {
+                    model.setCaretPosition(Integer.parseInt(controller.info[0]));
+                }
+            } else{
+                if(model.getCaretPosition()==Integer.parseInt(controller.info[0])) {
+                    if (!controller.info[2].equals("")) {
+                        model.setCaretPosition(Integer.parseInt(controller.info[1]));
+                    }
+                }
             }
             return;
         }

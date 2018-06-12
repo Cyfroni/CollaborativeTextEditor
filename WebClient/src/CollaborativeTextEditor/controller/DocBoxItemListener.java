@@ -26,7 +26,7 @@ public class DocBoxItemListener implements ItemListener {
         }
         String docName = e.getItem().toString();
         controller.mySendMessage("G" + docName);
-        String docText = controller.myReceiveMessage(controller.in, controller.buffer, 2);
+        String docText = controller.myReceiveMessage(controller.in, controller.buffer, 0);
 
         controller.info = new String[]{"0", "0", docText};
         controller.updateable = true;

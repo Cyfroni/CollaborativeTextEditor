@@ -22,11 +22,14 @@ public class TextAreaDocumentListener implements DocumentListener {
     @Override
     public void insertUpdate(DocumentEvent e) {
         controller.change(false);
+
+
     }
 
     @Override
     public void removeUpdate(DocumentEvent e) {
         controller.change(true);
+
     }
 
     @Override
