@@ -17,6 +17,7 @@ import static java.lang.StrictMath.pow;
 public class MyController {
     MyView view;
     MyModel model;
+    private static int MAX_SIZE = 4096;
 
     PrintWriter out;
     BufferedReader in;
@@ -31,7 +32,7 @@ public class MyController {
 
     boolean updateable = false;
 
-    char[] buffer = new char[1024];
+    char[] buffer = new char[MAX_SIZE];
 
     String[] info = new String[]{"0", "0", ""};
 
@@ -80,20 +81,14 @@ public class MyController {
             }
 
         }
-        System.out.println(previousCursor);
-        System.out.println("previusCursor");
-        System.out.println(previousIndex[0]);
-        System.out.println("prevIndex[0]");
-        System.out.println(previousIndex[1]);
-        System.out.println("prevIndex[1]");
-
 
         System.out.println("insertion" + Integer.toString(previousIndex[0] + 1) + Integer.toString(previousCursor - previousIndex[1]));
     }
 
 
     public String[] toPlaceAt(String parse) {
-        String splitedText[] = parse.split(":", parse.indexOf(':'));
+        String splitedText[] = parse.split(":", 2);
+        System.out.printf(Arrays.toString(splitedText));
         String[] splitedIndexes = splitedText[0].split("\\.");
         int[] splited = new int[4];
         System.out.println(Arrays.toString(splitedIndexes));
@@ -126,7 +121,6 @@ public class MyController {
         view.addTextAreaFrameListener(new TextAreaFrameListener(this));
         view.addTextAreaUndoableEditListener(new TextAreaUndoableEditListener(this));
         view.setStageView(MyView.StageView.MAIN_MENU);
-        System.out.println("siema");
     }
 
     public void init() {
@@ -149,22 +143,31 @@ public class MyController {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    char[] thbuffer = new char[1024];
+                    char[] thbuffer = new char[MAX_SIZE];
                     while (true) {
                         System.out.println("czeka");
                         String toUpdate = myReceiveMessage(infrom, thbuffer, 0);
-
+                        if(thbuffer[0] == '\0'){
+                            end();
+                            break;
+                        }
                         System.out.println(toUpdate);
                         info = toPlaceAt(toUpdate);
                         updateable = true;
                         model.updateTextArea(info);
                         updateable = false;
                     }
+                    System.out.println("listening thread end");
                 }
             };
             thread.start();
         } catch (IOException e1) {
             e1.printStackTrace();
         }
+    }
+
+    private void end() {
+        view.end();
+        System.out.println("Ending.. ");
     }
 }

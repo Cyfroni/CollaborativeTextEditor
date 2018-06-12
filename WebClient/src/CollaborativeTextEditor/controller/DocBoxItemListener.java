@@ -7,6 +7,8 @@ import javax.swing.text.BadLocationException;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import static java.lang.Thread.sleep;
+
 public class DocBoxItemListener implements ItemListener {
     private MyController controller;
     private MyView view;
@@ -26,13 +28,21 @@ public class DocBoxItemListener implements ItemListener {
         }
         String docName = e.getItem().toString();
         controller.mySendMessage("G" + docName);
-        String docText = controller.myReceiveMessage(controller.in, controller.buffer, 0);
 
-        controller.info = new String[]{"0", "0", docText};
+        String docText;
+        boolean cond = true;
         controller.updateable = true;
-//        model.removeAll();
         model.setText("");
-        model.updateTextArea(controller.info);
+        do {
+            docText = controller.myReceiveMessage(controller.in, controller.buffer, 0);
+            if (docText.endsWith("\0")){
+                cond = false;
+                docText = docText.substring(0, docText.length() - 1);
+            }
+            model.append(docText);
+
+        }while (cond);
+
         controller.updateable = false;
         view.setTitle(docName);
         view.setStageView(MyView.StageView.TEXTAREA);

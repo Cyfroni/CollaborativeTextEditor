@@ -24,6 +24,11 @@ public class MyView {
         update();
     }
 
+    public void end() {
+        mainFrame.dispose();
+        textAreaFrame.dispose();
+    }
+
     public enum StageView {
         MAIN_MENU, MAIN_NEWDOC, TEXTAREA
     }
