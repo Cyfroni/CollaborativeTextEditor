@@ -298,10 +298,12 @@ void *connection_handler(void* socket_desc)
 						sheet=sheet+*j;
 					}
 					cout<<sheet<<endl;
-					send(sock, (sheet+"\n").c_str(), strlen((sheet+"\n").c_str()), 0);
+					if ( i+1 == dataBase[info].first.end())
+						send(sock, (sheet).c_str(), strlen((sheet).c_str()), 0);
+					else
+						send(sock, (sheet+"\n").c_str(), strlen((sheet+"\n").c_str()), 0);
 					sheet="";
 				}
-
 			send(sock, "\0", sizeof(char), 0);
 
 
