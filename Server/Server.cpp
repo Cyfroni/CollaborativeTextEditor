@@ -82,7 +82,7 @@ int main(int c, char** v)
         system((string("mkdir -p ") + DIR_PATH).c_str());
     else if (info.st_mode & S_IFDIR) {}
     else
-        perror((string("") + DIR_PATH + " is no directory\n").c_str());
+        cout<<(string("") + DIR_PATH + " is no directory\n").c_str();
 
 	pthread_create(&thread_id, NULL, listening, 0);
 	threads.insert(thread_id);
@@ -176,7 +176,7 @@ void *listening(void*)
 				for (auto x : listeners)
 					send(ChildrenSockets[x], info.c_str(), strlen(info.c_str()), 0);
 			else
-				perror("IGNORED\n");
+				cout<<"IGNORED\n";
 			cout<<"Alutam\n";
 		}
 
