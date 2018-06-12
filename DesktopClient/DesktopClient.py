@@ -100,15 +100,15 @@ class Menu:
         file_name = self.om_variable.get()
         if len(file_name) == 0:
             return
-        text_window = Tk()
+        self._window = Tk()
         sock.send("G" + file_name)
         self.parent.withdraw()
-        text_window.protocol('WM_DELETE_WINDOW',
-                             lambda: (text_window.destroy(), self.parent.deiconify(), sock.send("UG")))
+        self._window.protocol('WM_DELETE_WINDOW',
+                             lambda: (self._window.destroy(), self.parent.deiconify(), sock.send("UG")))
 
 
-        self.text2 = Text(text_window, height=150, width=120, undo=True)
-        scroll = Scrollbar(text_window, command=self.text2.yview)
+        self.text2 = Text(self._window, height=150, width=120, undo=True)
+        scroll = Scrollbar(self._window, command=self.text2.yview)
         self.text2.configure(yscrollcommand=scroll.set)
 
         self.text2.pack(side=LEFT, fill=Y)
@@ -192,7 +192,7 @@ class Menu:
         self.text2.delete('end-2c')
         self.mother = False
 
-        center_window(text_window,858, 300)
+        center_window(self._window,858, 300)
 
     def validate(self, action, index, value_if_allowed,
                        prior_value, text, validation_type, trigger_type, widget_name):
@@ -204,25 +204,28 @@ class Menu:
 
     def create(self):
         print("create")
-        file_name_window = Tk()
+        self._window = Tk()
         self.parent.withdraw()
-        file_name_window.protocol('WM_DELETE_WINDOW', lambda: None)
-        vcmd = (file_name_window.register(self.validate),
+        self._window.protocol('WM_DELETE_WINDOW', lambda: None)
+        vcmd = (self._window.register(self.validate),
                 '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
-        entry = Entry(file_name_window,validate = 'key', validatecommand = vcmd)
+        entry = Entry(self._window,validate = 'key', validatecommand = vcmd)
 
-        ok = Button(file_name_window, text="OK", width=10, command=lambda: self.ask_for_new_doc(file_name_window, entry))
-        back = Button(file_name_window, text="<-", width=10,
-                      command=lambda: (file_name_window.destroy(), self.parent.deiconify()))
+        ok = Button(self._window, text="OK", width=10, command=lambda: self.ask_for_new_doc(self._window, entry))
+        back = Button(self._window, text="<-", width=10,
+                      command=lambda: (self._window.destroy(), self.parent.deiconify()))
         entry.grid(columnspan=2)
         entry.focus_set()
         back.grid(column=0, row=1)
         ok.grid(column=1, row=1)
-        center_window(file_name_window, 215, 48)
+        center_window(self._window, 215, 48)
 
     def update_mot(self):
         try:
             info = queue.popleft()
+	    if info == '\0':
+		window.destroy()
+		self._window.destroy()
             index, data = info.split(":", 1)
             index = index.split(".")
             index1 = index[0] + "." + index[1]
@@ -256,11 +259,11 @@ class ClientThread(Thread):
         while True:
             print("czeka")
             info = self.socket.recv(100)
-            if info == '':
+	    print("#", info)
+	    queue.append(info)
+            if info == '\0':
                 break
-            print("#", info)
-            queue.append(info)
-
+	print("listening thread end")
 
 try:
 
@@ -279,6 +282,7 @@ try:
 except Exception as e:
     print(e)
 finally:
+    print("Ending.. ")
     sock.close()
 
     server_socket.close()

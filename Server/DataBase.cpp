@@ -34,7 +34,7 @@ void test()
 	dataBase.emplace(file, dock);
 	//przychodzi info od klienta
 	//string info = "1.0.1.1:t";
-	string info1 = "1.0.1.3:";
+	string info1 = "1.1.2.0:\n";
 
 	while(true){
 		printSheet(dataBase[file].first);
@@ -133,11 +133,11 @@ bool add(DATABASE &dataBase, string file, string info)
 	}
 	else
 	{
-		auto vecLines = split(change, "\n");
-		if (vecLines.size() - 1 != linesAmount){
+		if (count(change.begin(),change.end(),'\n') != linesAmount){
 			perror("ERROR: lines amount dont match with difference in index\n");
 			return false;
 		}
+		auto vecLines = split(change, "\n");
 
 		if(sheet.size()==0 && linesAmount==0)
 			linesAmount=1;

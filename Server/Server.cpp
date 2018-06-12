@@ -11,40 +11,29 @@
 #include "DataBase.cpp"
 #include <netdb.h>
 
-#define MYPORT 8181    // port, z którym będą się łączyli użytkownicy
-#define MYPORT1 8090
-#define BACKLOG 10     // jak dużo możę być oczekujących połączeń w kolejce
-#define MAX_LENGTH 4096
+#define MYPORT 8181    				// port, z którym będą się łączyli użytkownicy
+#define BACKLOG 10				// jak dużo możę być oczekujących połączeń w kolejce
+#define MAX_LENGTH 4096				// maksymalna wielkosc wiadomosci
 
 struct stat info;
-deque<string> FileList;
-unordered_map<int, int> ChildrenSockets;
-pthread_t thread_id;
-DATABASE dataBase;
-deque<pair<string, string> > messageQueue;
-unordered_set<pthread_t> threads;
-int root_socket; // nasłuchuj na root_socket, nowe połaczenia na sock
-int end_proc = 0;
+deque<string> FileList;				// lista plików na serwerze
+unordered_map<int, int> ChildrenSockets;	// mapa do rozróżniania klientów
+DATABASE dataBase;				// baza zawartosci plików
+deque<pair<string, string> > messageQueue;	// kolejka wiadomosci zmian
+unordered_set<pthread_t> threads;		// odpalone wątki
+int root_socket; 				// socket obsługujący tworzenie połączeń
+int end_proc = 0; 				// flaga zakończenia
 
+pthread_t thread_id;
 struct arg_struct {
 	int sock;
 	int PORT_num;
 };
 
 void *connection_handler(void *);
-void readDocumentNames(const string&, deque<string>&);
 void *listening(void*);
-
-void termination_handler (int signum)
-{
-	cout<< "Signal " << signum << " caught..." << endl;
-	end_proc = 1;
-	close(root_socket);
-	for (auto kv : ChildrenSockets){
-		close(kv.first);
-		close(kv.second);
-	}
-}
+void termination_handler(int);
+void readDocumentNames(const string&, deque<string>&);
 
 int main(int c, char** v)
 {
@@ -56,7 +45,6 @@ int main(int c, char** v)
 	struct sockaddr_in my_addr; // informacja o moim adresie
 	struct sockaddr_in their_addr; // informacja o adresie osoby łączącej się
 	unsigned int sin_size = sizeof(struct sockaddr_in);
-	struct sigaction sa;
 	int yes = 1;
 
 	if ((root_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1)
@@ -88,8 +76,6 @@ int main(int c, char** v)
 		exit(1);
 	}
 
-	//signal(SIGABRT, &termination_handler);
-	//signal(SIGTERM, &termination_handler);
 	signal(SIGINT, &termination_handler);
 
     if (stat(DIR_PATH, &info) != 0)
@@ -108,7 +94,6 @@ int main(int c, char** v)
 		struct arg_struct args;
 		if ((args.sock = accept(root_socket, (struct sockaddr *)&their_addr, &sin_size)) == -1)
 		{
-			perror("accept");
 			if(end_proc)
 				break;
 			else{
@@ -118,7 +103,6 @@ int main(int c, char** v)
 		args.PORT_num = port_generator++;
 		printf("server: got connection from %s\n", inet_ntoa(their_addr.sin_addr));
 		pthread_create(&thread_id, NULL, connection_handler, &args);
-		pthread_detach(thread_id);
 		threads.insert(thread_id);
 	
 		int mother_socket; // nasłuchuj na sock_fd, nowe połaczenia na sock
@@ -200,6 +184,17 @@ void *listening(void*)
 	cout<<"Listening thread end\n";
 }
 
+void termination_handler (int signum)
+{
+	cout<< "Signal " << signum << " caught..." << endl;
+	end_proc = 1;
+	close(root_socket);
+	for (auto kv : ChildrenSockets){
+		send(kv.second, "", 1, 0);
+		close(kv.second);
+	}
+}
+
 void *connection_handler(void* socket_desc)
 {
 	// to jest proces-dziecko
@@ -215,9 +210,12 @@ void *connection_handler(void* socket_desc)
 
 	while (1)
 	{
-		perror("czekam\n");
-		if ((amount = recv(sock, instr, sizeof(instr) - 1, 0)) == -1)
+		cout<<"czekam\n";
+		if ((amount = recv(sock, instr, sizeof(instr) - 1, 0)) == -1){
 			perror("recv");
+			break;
+		}
+		
 
 		if (amount == 0)
 			break;
@@ -342,6 +340,8 @@ void *connection_handler(void* socket_desc)
 		}
 	}
 	ChildrenSockets.erase(sock);
+	if(!end_proc)
+		threads.erase(pthread_self());
 	close(sock);
 	cout<<"child process end\n";
 }
