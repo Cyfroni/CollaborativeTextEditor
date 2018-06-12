@@ -94,6 +94,7 @@ int main(int c, char** v)
 	pthread_create(&thread_id, NULL, listening, 0);
 	readDocumentNames(DIR_PATH, FileList);
 	int port_generator = 9000;
+	cout<<"Server is up\n";
 	while (1)
 	{ // głowna pętla accept()
 		sin_size = sizeof(struct sockaddr_in);
@@ -164,15 +165,12 @@ void *listening(void*)
 			auto &listeners = dataBase[message.second].second;
 			string info = message.first;
 			cout << "Matula:  " << info << "###";
-			for (auto x : listeners)
-			{
-				cout << x << " ";
-				send(ChildrenSockets[x], info.c_str(), strlen(info.c_str()), 0);
-				cout<<"tato"<<endl;
-			}
-			add(dataBase, message.second, info);
-			cout << endl;
-			cout<<"Alutam"<<endl;
+			if (add(dataBase, message.second, info))
+				for (auto x : listeners)
+					send(ChildrenSockets[x], info.c_str(), strlen(info.c_str()), 0);
+			else
+				perror("IGNORED\n");
+			cout<<"Alutam\n";
 		}
 
 	}
