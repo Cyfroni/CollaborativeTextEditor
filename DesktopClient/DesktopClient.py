@@ -189,7 +189,7 @@ class Menu:
             data = sock.recv(100)
             self.text2.insert(END, data)
             print(data)
-        self.text2.delete('end-2c')
+        self.text2.delete('end-1c')
         self.mother = False
 
         center_window(text_window,858, 300)
