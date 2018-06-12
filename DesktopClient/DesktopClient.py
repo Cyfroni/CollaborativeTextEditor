@@ -223,7 +223,7 @@ class Menu:
     def update_mot(self):
         try:
             info = queue.popleft()
-            index, data = info.split(":")
+            index, data = info.split(":", 1)
             index = index.split(".")
             index1 = index[0] + "." + index[1]
             index2 = index[2] + "." + index[3]
