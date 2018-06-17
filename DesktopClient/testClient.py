@@ -8,13 +8,16 @@ from threading import Thread
 import unittest
 import os
 import signal
+import select
 
 HOST = '127.0.0.1'
 PORT = 8181
 queue = deque()
 msgLen=4096
+sec=0.2
 """
 class TestConnection(unittest.TestCase):
+
     def test_server_connects(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((HOST, PORT))
@@ -59,6 +62,7 @@ def otherClientProgram():
     docName="test1"
     sock.send("N" + docName)
 
+
     sock.close()
     server_socket.close()
     client_socket2.close()
@@ -88,7 +92,7 @@ class TestStringMethods(unittest.TestCase):
     def test01_NewDoc1(self):
         docName="test1"
         sock.send("N" + docName)
-        time.sleep(0.1)
+        time.sleep(sec)
         sock.send("UP")
         data = sock.recv(msgLen).split("\n")
         self.assertTrue(set(data) == set(['123.txt', 'test1.txt', '']))
@@ -96,9 +100,9 @@ class TestStringMethods(unittest.TestCase):
     def test02_NewDoc2(self):
         docName="test1"
         sock.send("N" + docName)
-        time.sleep(0.1)
+        time.sleep(sec)
         sock.send("N" + docName)
-        time.sleep(0.1)
+        time.sleep(sec)
         sock.send("UP")
         data = sock.recv(msgLen).split("\n")
         self.assertTrue(set(data) == set(['123.txt', 'test1.txt', '']))
@@ -116,14 +120,14 @@ class TestStringMethods(unittest.TestCase):
 
     def test04_Open_Doc(self):
         sock.send("G"+"test1.txt")
-        time.sleep(0.1)
+        time.sleep(sec)
         data1=sock.recv(msgLen)
-        self.assertTrue(set(str(data1))==set(chr(10)+chr(0)))
+        self.assertTrue(set(str(data1))==set(chr(0)))
 
 
     def test05_Writing_letter(self):
         sock.send("Z"+"1.0.1.1:A")
-        time.sleep(0.1)
+        time.sleep(sec)
         info=queue.popleft()
         index,data=info.split(":")
         index=index.split(".")
@@ -133,7 +137,7 @@ class TestStringMethods(unittest.TestCase):
 
     def test06_Writing_two_letterts(self):
         sock.send("Z"+"1.1.1.3:BC")
-        time.sleep(0.1)
+        time.sleep(sec)
         info=queue.popleft()
         index,data=info.split(":")
         index=index.split(".")
@@ -143,7 +147,7 @@ class TestStringMethods(unittest.TestCase):
 
     def test07_Writing_letter_space_letter(self):
         sock.send("Z"+"1.3.1.6:d e")
-        time.sleep(0.1)
+        time.sleep(sec)
         info=queue.popleft()
         index,data=info.split(":")
         index=index.split(".")
@@ -154,42 +158,222 @@ class TestStringMethods(unittest.TestCase):
     def test08_exit_enter_check(self):
         data2="ABCd e"
         sock.send("UG")
-        time.sleep(0.1)
+        time.sleep(sec)
         sock.send("G"+"test1.txt")
-        time.sleep(0.1)
+        time.sleep(sec)
         data1=sock.recv(msgLen)
-        self.assertTrue(str(data1)==(str(data2)+chr(10)+chr(0)))
+        self.assertTrue(str(data1)==(str(data2)+chr(0)))
 
     def test09_Writing_delete_last_letter(self):
         data2="ABCd "
         sock.send("Z"+"1.5.1.6:")
-        time.sleep(0.1)
+        time.sleep(sec)
         sock.send("UG")
-        time.sleep(0.1)
+        time.sleep(sec)
         sock.send("G"+"test1.txt")
-        time.sleep(0.1)
+        time.sleep(sec)
         data1=sock.recv(msgLen)
-        self.assertTrue(str(data1)==(str(data2)+chr(10)+chr(0)))
+        self.assertTrue(str(data1)==(str(data2)+chr(0)))
 
     def test10_Writing_new_line(self):#dodac z enterem
         data2="ABCd \n"
         sock.send("Z"+"1.5.2.0:\n")
-        time.sleep(0.1)
+        time.sleep(sec)
         sock.send("UG")
-        time.sleep(0.1)
+        time.sleep(sec)
         sock.send("G"+"test1.txt")
-        time.sleep(0.1)
+        time.sleep(sec)
         data1=sock.recv(msgLen)
-        self.assertTrue(str(data1)==(str(data2)+chr(10)+chr(0)))
+        self.assertTrue(str(data1)==(str(data2)+chr(0)))
 
+    def test11_Writing(self):
+        data2="ABCd \nFGH\n"
+        sock.send("Z"+"2.0.3.0:FGH\n")
+        time.sleep(sec)
+        sock.send("UG")
+        time.sleep(sec)
+        sock.send("G"+"test1.txt")
+        time.sleep(sec)
+        data1=sock.recv(msgLen)
+        self.assertTrue(str(data1)==(str(data2)+chr(0)))
+
+    def test12_Writing(self):
+        data2="ABCd \n\n"
+        sock.send("Z"+"2.0.2.3:")
+        time.sleep(sec)
+        sock.send("UG")
+        time.sleep(sec)
+        sock.send("G"+"test1.txt")
+        time.sleep(sec)
+        data1=sock.recv(msgLen)
+        self.assertTrue(str(data1)==(str(data2)+chr(0)))
+
+    def test13_Writing(self):
+        data2="ABCd "
+        sock.send("Z"+"1.5.3.0:")
+        time.sleep(sec)
+        sock.send("UG")
+        time.sleep(sec)
+        sock.send("G"+"test1.txt")
+        time.sleep(sec)
+        data1=sock.recv(msgLen)
+        self.assertTrue(str(data1)==(str(data2)+chr(0)))
+
+    def test13_Writing(self):
+        data2="ABCd "
+        sock.send("Z"+"1.5.3.0:")
+        time.sleep(sec)
+        sock.send("UG")
+        time.sleep(sec)
+        sock.send("G"+"test1.txt")
+        time.sleep(sec)
+        data1=sock.recv(msgLen)
+        self.assertTrue(str(data1)==(str(data2)+chr(0)))
+
+    def test14_Writing(self):
+        data2="ABCd "
+        sock.send("Z"+"1.5.3.0:")
+        time.sleep(sec)
+        sock.send("UG")
+        time.sleep(sec)
+        sock.send("G"+"test1.txt")
+        time.sleep(sec)
+        data1=sock.recv(msgLen)
+        self.assertTrue(str(data1)==(str(data2)+chr(0)))
+
+    def test15_Writing(self):
+        data2="ABC"
+        sock.send("Z"+"1.3.1.5:")
+        time.sleep(sec)
+        sock.send("UG")
+        time.sleep(sec)
+        sock.send("G"+"test1.txt")
+        time.sleep(sec)
+        data1=sock.recv(msgLen)
+        self.assertTrue(str(data1)==(str(data2)+chr(0)))
+
+    def test16_Writing(self):
+        data2="ABBBC"
+        sock.send("Z"+"1.1.1.3:BB")
+        time.sleep(sec)
+        sock.send("UG")
+        time.sleep(sec)
+        sock.send("G"+"test1.txt")
+        time.sleep(sec)
+        data1=sock.recv(msgLen)
+        self.assertTrue(str(data1)==(str(data2)+chr(0)))
+
+    def test17_Writing(self):
+        data2="ABBBC<1&2/\|~$3*>"
+        sock.send("Z"+"1.5.1.17:<1&2/\|~$3*>")
+        time.sleep(sec)
+        sock.send("UG")
+        time.sleep(sec)
+        sock.send("G"+"test1.txt")
+        time.sleep(sec)
+        data1=sock.recv(msgLen)
+        self.assertTrue(str(data1)==(str(data2)+chr(0)))
+
+    def test18_HACK(self):
+        data2="ABBBC<1&2/\|~$3*>Z1.17.1.28:"
+        sock.send("Z"+"1.17.1.28:Z1.17.1.28:")
+        time.sleep(sec)
+        sock.send("UG")
+        time.sleep(sec)
+        sock.send("G"+"test1.txt")
+        time.sleep(sec)
+        data1=sock.recv(msgLen)
+        self.assertTrue(str(data1)==(str(data2)+chr(0)))
+
+    def test19_badinput(self):
+        data2=""
+        sock.send("")
+        sock.setblocking(0)
+        check=0
+        ready = select.select([sock], [], [], 1)
+        if ready[0]:
+            data1=sock.recv(msgLen)
+        else:
+            check=1
+        self.assertTrue(check==1)
+
+    def test20_badinput(self):
+        data2=""
+        sock.send("aaaa")
+        sock.setblocking(0)
+        check=0
+        ready = select.select([sock], [], [], 1)
+        if ready[0]:
+            data1=sock.recv(msgLen)
+        else:
+            check=1
+        self.assertTrue(check==1)
+
+    def test21_badinput(self):
+        data2=""
+        sock.send("1. .1.1:2")
+        check=0
+        data1=""
+        ready = select.select([sock], [], [], 1)
+        if ready[0]:
+            data1=sock.recv(msgLen)
+        else:
+            check=1
+        self.assertTrue(check==1)
+
+    def test22_badinput(self):
+        data2=""
+        sock.send("1.0 .1.1:afg")
+
+        check=0
+        ready = select.select([sock], [], [], 1)
+        if ready[0]:
+            data1=sock.recv(msgLen)
+        else:
+            check=1
+        self.assertTrue(check==1)
+
+    def test23_badinput(self):
+        data2=""
+        sock.send("1.0.1.1;bad")
+
+        check=0
+        ready = select.select([sock], [], [], 1)
+        if ready[0]:
+            data1=sock.recv(msgLen)
+        else:
+            check=1
+        self.assertTrue(check==1)
+
+    def test24_badinput(self):
+        data2=""
+        sock.send("Z1.0.1.1:b")
+
+        check=0
+        ready = select.select([sock], [], [], 1)
+        if ready[0]:
+            data1=sock.recv(msgLen)
+        else:
+            check=1
+        self.assertTrue(check==1)
+
+    def test25_delete_rest(self):
+        data2=""
+        sock.send("Z"+"1.0.1.29:")
+        time.sleep(sec)
+        sock.send("UG")
+        time.sleep(sec)
+        sock.send("G"+"test1.txt")
+        time.sleep(sec)
+        data1=sock.recv(msgLen)
+        self.assertTrue(str(data1)==(str(data2)+chr(0)))
 
     def test99_close(self):
-
+        time.sleep(sec)
         sock.close()
         server_socket.close()
         client_socket3.close()
         ct._Thread__stop()
-
 
 if __name__ == '__main__':
     unittest.main()
